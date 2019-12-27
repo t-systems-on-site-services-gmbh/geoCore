@@ -114,3 +114,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# project specific ignores
+makeres.bat
