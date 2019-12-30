@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Bohrprofil</string>
+   <string>Drilling profile</string>
   </property>
   <property name="sizeGripEnabled">
    <bool>true</bool>
