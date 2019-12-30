@@ -1,0 +1,48 @@
+boxes:
+    S: #shortname
+        longname: Sand
+    T: #shortname
+        longname: Ton
+    U: #shortname
+        longname: Schluff
+    G: #shortname
+        longname: Kies
+    H: #shortname
+        longname: Torf
+
+descriptions:
+    u4: #shortname
+        longname: stark schluffig
+    h: #shortname
+        longname: humos
+    fs: #shortname
+        longname: feinsandig
+    u1: #shortname
+        longname: leicht schluffig
+    u2: #shortname
+        longname: vermehrt schluffig
+    t1: #shortname
+        longname: leicht tonig
+    lam: #shortname
+        longname: laminiert
+        texture: lam.svg
+    as: #shortname
+        longname: Articulated shell
+        texture: symbols/ashell.svg
+    wood: #shortname
+        longname: Holz
+        texture: symbols/wood.svg
+
+colors:
+    gr: #shortname
+        longname: grau
+        code: c9c8c8
+    br: #shortname
+        longname: braun
+        code: b6afa1
+    ge: #shortname
+        longname: gelb
+        code: f6e8a1
+    gru: #shortname
+        longname: grün
+        code: 5f9288
