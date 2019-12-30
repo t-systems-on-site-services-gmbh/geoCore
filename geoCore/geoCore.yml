@@ -1,14 +1,19 @@
 boxes:
     S: #shortname
         longname: Sand
+        width: 1.5
     T: #shortname
         longname: Ton
+        width: 1.0
     U: #shortname
         longname: Schluff
+        width: 1.25
     G: #shortname
         longname: Kies
+        width: 1.75
     H: #shortname
         longname: Torf
+        width: 2.0
 
 descriptions:
     u4: #shortname
