@@ -21,6 +21,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+import os.path
+
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
@@ -29,8 +31,6 @@ from qgis.PyQt.QtWidgets import QAction
 from .resources import *
 # Import the code for the dialog
 from .petroProfile_dialog import PetroProfileDialog
-import os.path
-
 
 class PetroProfile:
     """QGIS Plugin Implementation."""
@@ -66,6 +66,7 @@ class PetroProfile:
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
         self.first_start = None
+        self.dlg = None
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -84,16 +85,16 @@ class PetroProfile:
 
 
     def add_action(
-        self,
-        icon_path,
-        text,
-        callback,
-        enabled_flag=True,
-        add_to_menu=True,
-        add_to_toolbar=True,
-        status_tip=None,
-        whats_this=None,
-        parent=None):
+            self,
+            icon_path,
+            text,
+            callback,
+            enabled_flag=True,
+            add_to_menu=True,
+            add_to_toolbar=True,
+            status_tip=None,
+            whats_this=None,
+            parent=None):
         """Add a toolbar icon to the toolbar.
 
         :param icon_path: Path to the icon for this action. Can be a resource
@@ -184,10 +185,11 @@ class PetroProfile:
         """Run method that performs all the real work"""
 
         # Create the dialog with elements (after translation) and keep reference
-        # Only create GUI ONCE in callback, so that it will only load when the plugin is started
-        if self.first_start == True:
+        # Only create GUI ONCE in callback, so that it will only load
+        # when the plugin is started
+        if self.first_start:
             self.first_start = False
-            self.dlg = PetroProfileDialog()
+            self.dlg = PetroProfileDialog(self.iface)
 
         # show the dialog
         self.dlg.show()

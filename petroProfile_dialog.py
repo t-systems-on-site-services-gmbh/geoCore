@@ -21,19 +21,23 @@
  *                                                                         *
  ***************************************************************************/
 """
-
 import os
 
 from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
 
-# This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
+from .profileBuilder import ProfileBuilder
+
+# This loads your .ui file so that PyQt can populate your plugin
+# with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'petroProfile_dialog_base.ui'))
 
 
 class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
-    def __init__(self, parent=None):
+    """Dialog to show the petrographic drilling profiles"""
+
+    def __init__(self, iface, parent=None):
         """Constructor."""
         super(PetroProfileDialog, self).__init__(parent)
         # Set up the user interface from Designer through FORM_CLASS.
@@ -42,3 +46,14 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.iface = iface
+        self.drawProfiles()        
+
+    def drawProfiles(self):
+        builder = ProfileBuilder(self.showMessage)
+        builder.drawProfiles(self.iface.activeLayer().selectedFeatures())
+
+
+
+    def showMessage(self, title, message, level):
+        self.iface.messageBar().pushMessage(title, message, level)
