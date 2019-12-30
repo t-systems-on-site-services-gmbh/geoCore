@@ -116,3 +116,4 @@ dmypy.json
 
 # project specific ignores
 makeres.bat
+.vscode
