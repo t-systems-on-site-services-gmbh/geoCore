@@ -46,10 +46,7 @@ class ProfileBuilder:
             # chop off parantheses
             k = k[1:-1]
             # and make a list of it
-            k = k.split(",")
-            for s in k:
-                if not (s.isspace() or (s == '')):
-                    kg.append(s)
+            kg = [s for s in k.split(",") if not (s.isspace() or (s == ''))]
         return (gg, kg)
 
     def drawProfiles(self, features):
