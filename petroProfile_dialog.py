@@ -27,6 +27,7 @@ from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
 
 from .profileBuilder import ProfileBuilder
+from .profilePainter import ProfilePainter
 
 # This loads your .ui file so that PyQt can populate your plugin
 # with the elements from Qt Designer
@@ -47,11 +48,16 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.iface = iface
-        self.drawProfiles()        
+        self.scene = QtWidgets.QGraphicsScene()
+        self.drawProfiles()
+        view = self.findChild(QtWidgets.QGraphicsView, "graphicsView")
+        view.setScene(self.scene)
 
     def drawProfiles(self):
         builder = ProfileBuilder(self.showMessage)
         pac = builder.getProfilesAndConnectors(self.iface.activeLayer().selectedFeatures())
+        painter = ProfilePainter(self.scene)
+        painter.paint(pac)
 
     def showMessage(self, title, message, level):
         self.iface.messageBar().pushMessage(title, message, level)

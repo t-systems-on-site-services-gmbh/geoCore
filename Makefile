@@ -38,19 +38,19 @@ LOCALES =
 # translation
 SOURCES = \
 	__init__.py \
-	petroProfile.py petroProfile_dialog.py geoCoreConfig.py profileBuilder.py profile.py profileBox.py
+	petroProfile.py petroProfile_dialog.py geoCoreConfig.py profileBuilder.py profile.py profileBox.py profilePainter.py
 
 PLUGINNAME = petroProfile
 
 PY_FILES = \
 	__init__.py \
-	petroProfile.py petroProfile_dialog.py geoCoreConfig.py profileBuilder.py profile.py profileBox.py
+	petroProfile.py petroProfile_dialog.py geoCoreConfig.py profileBuilder.py profile.py profileBox.py profilePainter.py
 
 UI_FILES = petroProfile_dialog_base.ui
 
-EXTRAS = metadata.txt icon.png
+EXTRAS = metadata.txt icon.png config.yml
 
-EXTRA_DIRS =
+EXTRA_DIRS = geoCore
 
 COMPILED_RESOURCE_FILES = resources.py
 
