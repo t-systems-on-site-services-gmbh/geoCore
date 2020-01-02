@@ -30,13 +30,16 @@ descriptions:
         longname: leicht tonig
     lam: #shortname
         longname: laminiert
-        texture: lam.svg
+        texture: symbols/lam.svg
     as: #shortname
-        longname: Articulated shell
-        texture: symbols/ashell.svg
+        longname: articulated shell
     wood: #shortname
         longname: Holz
         texture: symbols/wood.svg
+
+facies:
+    st: subtidial
+    it: interdidial
 
 colors:
     gr: #shortname
