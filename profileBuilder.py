@@ -6,6 +6,8 @@ from qgis.core import Qgis, QgsExpression, QgsFeatureRequest, QgsProject, QgsMes
 from qgis.PyQt.QtCore import QVariant
 
 from .geoCoreConfig import Config
+from .profile import Profile
+from .profileBox import ProfileBox
 
 class ProfileBuilder:
     """This class constructs the drilling profiles"""
@@ -29,6 +31,7 @@ class ProfileBuilder:
             self.showErrorMessage("Error", "Layer {} not found.".format(self.config.settings["layerSchichtdaten"]))
             return None
 
+        # we may want to sort the features by "schichtnr"
         return layerSchichtdaten[0].getFeatures(qfr)
 
     def _getLayerAttributes(self, schichtdaten):
@@ -51,10 +54,8 @@ class ProfileBuilder:
             kg = [s.strip() for s in k.split(",") if not (s.isspace() or (s == ''))]
         return (gg, kg)
 
-    def drawProfiles(self, features, showInfo):
-        """Construct the drilling profiles
-        Parameter showInfo denotes if the drawing shall
-        contain textual information about the layers."""
+    def getProfilesAndConnectors(self, features):
+        """Get the drilling profiles and its connectors"""
         profiles = []
         x = features[0].attribute('xcoord')
         y = features[0].attribute('ycoord')
@@ -66,7 +67,7 @@ class ProfileBuilder:
             yp = f.attribute('zcoorddb') * 100 # convert to cm
             x = f.attribute('xcoord')
             y = f.attribute('ycoord')
-            profiles.append(self._drawProfile(f, xp, yp, showInfo))
+            profiles.append(self._getProfile(f, xp, yp))
 
         actualProfiles = []
         actualFeatures = []
@@ -77,14 +78,20 @@ class ProfileBuilder:
         if len(actualProfiles) == 0:
             self.showMessage("Info", "Select at least one feature or activate the correct layer.", Qgis.Info)
 
-        self._connectProfiles(actualProfiles, actualFeatures)
+        connectors = self._connectProfiles(actualProfiles, actualFeatures)
 
-    def _drawProfile(self, feature, x, y, showInfo):
+        return actualProfiles + connectors
+
+    def _getProfile(self, feature, x, y):
         """Construct a profile from feature"""
         profileId = feature.attribute("id")
         schichtdaten = self._getSchichtdaten(profileId)
         if schichtdaten is None:
             return None
+
+        profile = Profile(profileId)
+        profile.x = x
+        profile.y = y
 
         boxes = self.config.geoCore['boxes']
         colors = self.config.geoCore['colors']
@@ -92,44 +99,52 @@ class ProfileBuilder:
         facies = self.config.geoCore['facies']
         layerAttributes = self._getLayerAttributes(schichtdaten)
         for l in layerAttributes:
-            isFirst = l['schichtnr'] == 1
-            isLast = l['schichtnr'] == len(layerAttributes)
+            pb = ProfileBox(l['schichtnr'])
+            pb.isLast = l['schichtnr'] == len(layerAttributes)
+            pb.y = y
+            pb.height = l['tiefe bis']-l['tiefe von']
+
             gg, kg = self._splitPetrographie(l['petrographie'])
-            height = l['tiefe bis']-l['tiefe von']
-            width = boxes[gg]['width']
+            pb.width = boxes[gg]['width']
+
             color = self._cfgLookup(colors, l['farbe'])
-            info = ""
-            if showInfo:
-                ggDict = self._cfgLookup(boxes, gg)
-                infoList = []
-                infoList.append(self._cfgLookup(facies, l['facies']))
-                infoList.append(self._cfgLookup(ggDict, 'longname'))
-                for k in kg:
-                    kgDict = self._cfgLookup(descriptions, k)
-                    infoList.append(self._cfgLookup(kgDict, 'longname'))
-                infoList.append(l['beschreibung'])
-                infoList.append(self._cfgLookup(color, 'longname'))
-                info = ", ".join([i for i in infoList if (i is not None) and not isinstance(i, QVariant)])             
-            
+            pb.color = self._cfgLookup(color, 'code')
+            pb.texture = self._cfgLookup(color, 'texture', showError=False)
+
+            ggDict = self._cfgLookup(boxes, gg)
+            infoList = []
+            infoList.append(self._cfgLookup(facies, l['facies']))
+            infoList.append(self._cfgLookup(ggDict, 'longname'))
+            for k in kg:
+                kgDict = self._cfgLookup(descriptions, k)
+                infoList.append(self._cfgLookup(kgDict, 'longname'))
+            infoList.append(l['beschreibung'])
+            infoList.append(self._cfgLookup(color, 'longname'))
+            pb.info = ", ".join([i for i in infoList if (i is not None) and not isinstance(i, QVariant)])
+
+            profile.boxes.append(pb)
+
             #QgsMessageLog.logMessage("Profile {} - petro: {}({}), width: {}, height: {}, x: {}, y: {}, info: {}".format(profileId, gg, kg, width, height, x, y, info), level=Qgis.Info)
-            y = y - height
+            y = y - pb.height
 
-        return True
+        return profile
 
-    def _cfgLookup(self, dictionary, key):
+    def _cfgLookup(self, dictionary, key, showError=True):
         """Return key from dictionary. Return None if key not found."""
         try:
             if (dictionary is not None) and not isinstance(key, QVariant):
                 return dictionary[key]
         except KeyError:
-            self.showErrorMessage("Error", "Key {} not found in config.".format(key))
+            if showError:
+                self.showErrorMessage("Error", "Key {} not found in config.".format(key))
         return None
 
     def _connectProfiles(self, profiles, features):
         """Multiple profiles need to be connected in the drawing"""
         if len(profiles) <= 1:
-            return
-        pass
+            return []
+        connectors = []
+        return connectors
 
     def showErrorMessage(self, title, message):
         """Display an error message"""
