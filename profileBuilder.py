@@ -100,6 +100,7 @@ class ProfileBuilder:
         layerAttributes = self._getLayerAttributes(schichtdaten)
         for l in layerAttributes:
             pb = ProfileBox(l['schichtnr'])
+            pb.group = l['gruppierung']
             pb.isLast = l['schichtnr'] == len(layerAttributes)
             pb.y = y
             pb.height = l['tiefe bis']-l['tiefe von']
