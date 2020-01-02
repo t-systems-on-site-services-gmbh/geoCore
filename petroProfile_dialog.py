@@ -51,7 +51,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def drawProfiles(self):
         builder = ProfileBuilder(self.showMessage)
-        builder.drawProfiles(self.iface.activeLayer().selectedFeatures())
+        builder.drawProfiles(self.iface.activeLayer().selectedFeatures(), True)
 
 
 

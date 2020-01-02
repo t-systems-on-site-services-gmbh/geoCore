@@ -1,7 +1,9 @@
 """Module to construct profiles"""
 
 import re
+from math import sqrt
 from qgis.core import Qgis, QgsExpression, QgsFeatureRequest, QgsProject, QgsMessageLog
+from qgis.PyQt.QtCore import QVariant
 
 from .geoCoreConfig import Config
 
@@ -46,12 +48,25 @@ class ProfileBuilder:
             # chop off parantheses
             k = k[1:-1]
             # and make a list of it
-            kg = [s for s in k.split(",") if not (s.isspace() or (s == ''))]
+            kg = [s.strip() for s in k.split(",") if not (s.isspace() or (s == ''))]
         return (gg, kg)
 
-    def drawProfiles(self, features):
-        """Construct the drilling profiles"""
-        profiles = [self._drawProfile(f) for f in features]
+    def drawProfiles(self, features, showInfo):
+        """Construct the drilling profiles
+        Parameter showInfo denotes if the drawing shall
+        contain textual information about the layers."""
+        profiles = []
+        x = features[0].attribute('xcoord')
+        y = features[0].attribute('ycoord')
+        for f in features:
+            # The x-position (xp) of the drilling profile is the distance
+            # to the previous coordinate. We start with xp = 0.
+            # The y-position of the profile is the elevation (z-coordinate).
+            xp = sqrt((f.attribute('xcoord') - x)**2 + (f.attribute('ycoord') - y)**2)
+            yp = f.attribute('zcoorddb') * 100 # convert to cm
+            x = f.attribute('xcoord')
+            y = f.attribute('ycoord')
+            profiles.append(self._drawProfile(f, xp, yp, showInfo))
 
         actualProfiles = []
         actualFeatures = []
@@ -64,7 +79,7 @@ class ProfileBuilder:
 
         self._connectProfiles(actualProfiles, actualFeatures)
 
-    def _drawProfile(self, feature):
+    def _drawProfile(self, feature, x, y, showInfo):
         """Construct a profile from feature"""
         profileId = feature.attribute("id")
         schichtdaten = self._getSchichtdaten(profileId)
@@ -72,14 +87,43 @@ class ProfileBuilder:
             return None
 
         boxes = self.config.geoCore['boxes']
+        colors = self.config.geoCore['colors']
+        descriptions = self.config.geoCore['descriptions']
+        facies = self.config.geoCore['facies']
         layerAttributes = self._getLayerAttributes(schichtdaten)
         for l in layerAttributes:
+            isFirst = l['schichtnr'] == 1
+            isLast = l['schichtnr'] == len(layerAttributes)
             gg, kg = self._splitPetrographie(l['petrographie'])
             height = l['tiefe bis']-l['tiefe von']
             width = boxes[gg]['width']
-            QgsMessageLog.logMessage("Profile {} - petro: {}({}), width: {}, height: {}".format(profileId, gg, kg, width, height), level=Qgis.Info)
+            color = self._cfgLookup(colors, l['farbe'])
+            info = ""
+            if showInfo:
+                ggDict = self._cfgLookup(boxes, gg)
+                infoList = []
+                infoList.append(self._cfgLookup(facies, l['facies']))
+                infoList.append(self._cfgLookup(ggDict, 'longname'))
+                for k in kg:
+                    kgDict = self._cfgLookup(descriptions, k)
+                    infoList.append(self._cfgLookup(kgDict, 'longname'))
+                infoList.append(l['beschreibung'])
+                infoList.append(self._cfgLookup(color, 'longname'))
+                info = ", ".join([i for i in infoList if (i is not None) and not isinstance(i, QVariant)])             
+            
+            #QgsMessageLog.logMessage("Profile {} - petro: {}({}), width: {}, height: {}, x: {}, y: {}, info: {}".format(profileId, gg, kg, width, height, x, y, info), level=Qgis.Info)
+            y = y - height
 
         return True
+
+    def _cfgLookup(self, dictionary, key):
+        """Return key from dictionary. Return None if key not found."""
+        try:
+            if (dictionary is not None) and not isinstance(key, QVariant):
+                return dictionary[key]
+        except KeyError:
+            self.showErrorMessage("Error", "Key {} not found in config.".format(key))
+        return None
 
     def _connectProfiles(self, profiles, features):
         """Multiple profiles need to be connected in the drawing"""
