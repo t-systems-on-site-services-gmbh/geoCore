@@ -10,7 +10,9 @@ class ProfilePainter:
 
     def paint(self, otbps, description):
         """Construct items.
-        otbps stands for objects to be painted (i.e. profiles and connectors)."""
+        The parameter otbps stands for objects to be painted
+        (i.e. profiles and connectors). Parameter description
+        denotes if a description shall be added."""
         for i in otbps:
             i.paint(self.scene)
             if description:

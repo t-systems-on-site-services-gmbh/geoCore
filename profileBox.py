@@ -15,6 +15,7 @@ class ProfileBox:
         self.y = 0.0
         self.width = 0.0
         self.height = 0.0
+        self.depth = 0.0
         self.info = ''
         self.color = ''
         self.texture = ''
@@ -29,9 +30,37 @@ class ProfileBox:
 
     def paintDescription(self, scene, xpos):
         """Paint description"""
+        width = self._paintDepthMark(scene, xpos)
+        if self.isFirst:
+            self._paintTopDepthMark(scene, xpos)
+        self._paintInfo(scene, xpos, width)
+
+    def _paintTopDepthMark(self, scene, xpos):
+        """Paint depth at the top of the layer"""
+        x, y, w, h = self._getPosAndDims(xpos)
+        d = scene.addText("{:<#5.3n} cm".format(self.depth - self.height))
+        d.adjustSize()
+        d.setX(x)
+        d.setY(y - (d.boundingRect().height() - 2))
+
+        scene.addLine(x, y, x + d.boundingRect().width(), y)
+
+    def _paintDepthMark(self, scene, xpos):
+        """Paint depth at the bottom of the layer box"""
+        x, y, w, h = self._getPosAndDims(xpos)
+        d = scene.addText("{:<#5.3n} cm".format(self.depth))
+        d.adjustSize()
+        d.setX(x)
+        d.setY(y + h - (d.boundingRect().height() - 2))
+
+        scene.addLine(x, y + h, x + d.boundingRect().width(), y + h)
+        return d.boundingRect().width()
+
+    def _paintInfo(self, scene, xpos, xoffset):
+        """Paint the info text"""
         x, y, w, h = self._getPosAndDims(xpos)
         t = scene.addText(self.info)
-        t.setX(x)
+        t.setX(x + xoffset)
         t.setY(y)
         t.setTextWidth(200)
 

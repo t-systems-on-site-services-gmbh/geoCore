@@ -105,6 +105,7 @@ class ProfileBuilder:
             pb.isLast = l['schichtnr'] == len(layerAttributes)
             pb.y = y
             pb.height = l['tiefe bis']-l['tiefe von']
+            pb.depth = l['tiefe bis']
 
             gg, kg = self._splitPetrographie(l['petrographie'])
             pb.width = boxes[gg]['width']
