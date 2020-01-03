@@ -16,3 +16,8 @@ class Profile:
     def height(self):
         """Return the height of the profile"""
         return reduce(lambda x, y: x + y, [b.height for b in self.boxes])
+
+    def paint(self, scene):
+        """Paint boxes onto scene"""
+        for b in self.boxes:
+            b.paint(scene, self.x)
