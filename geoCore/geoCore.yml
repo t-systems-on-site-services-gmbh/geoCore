@@ -44,13 +44,13 @@ facies:
 colors:
     gr: #shortname
         longname: grau
-        code: c9c8c8
+        code: "#c9c8c8"
     br: #shortname
         longname: braun
-        code: b6afa1
+        code: "#b6afa1"
     ge: #shortname
         longname: gelb
-        code: f6e8a1
+        code: "#f6e8a1"
     gru: #shortname
         longname: grün
-        code: 5f9288
+        code: "#5f9288"
