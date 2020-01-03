@@ -24,12 +24,25 @@ class ProfileBox:
     def paint(self, scene, xpos):
         """Paint box onto scene"""
         pen, brush = self._getPenAndBrush()
+        x, y, w, h = self._getPosAndDims(xpos)
+        scene.addRect(x, y, w, h, pen, brush)
+
+    def paintDescription(self, scene, xpos):
+        """Paint description"""
+        x, y, w, h = self._getPosAndDims(xpos)
+        t = scene.addText(self.info)
+        t.setX(x)
+        t.setY(y)
+        t.setTextWidth(200)
+
+    def _getPosAndDims(self, xpos):
+        """Scales the position (x, y) as well as width and height"""
         # convert dimensions from cm to mm
         x = xpos * 10
         y = self.y * -10 # direction of y-axis is top down, point (0,0) is in the upper left
         w = self.width * 10
         h = self.height * 10
-        scene.addRect(x, y, w, h, pen, brush)
+        return x, y, w, h
 
     def _getPenAndBrush(self):
         """Get the pen and brush"""

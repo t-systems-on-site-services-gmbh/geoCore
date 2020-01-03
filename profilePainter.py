@@ -8,8 +8,10 @@ class ProfilePainter:
         All constructed items are added to the scene."""
         self.scene = scene
 
-    def paint(self, otbps):
+    def paint(self, otbps, description):
         """Construct items.
         otbps stands for objects to be painted (i.e. profiles and connectors)."""
         for i in otbps:
             i.paint(self.scene)
+            if description:
+                i.paintDescription(self.scene)

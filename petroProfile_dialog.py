@@ -58,7 +58,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         builder = ProfileBuilder(self.showMessage)
         pac = builder.getProfilesAndConnectors(features)
         painter = ProfilePainter(self.scene)
-        painter.paint(pac)
+        painter.paint(pac, True)
 
     def showMessage(self, title, message, level):
         self.iface.messageBar().pushMessage(title, message, level)
