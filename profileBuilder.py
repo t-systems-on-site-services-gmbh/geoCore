@@ -57,17 +57,18 @@ class ProfileBuilder:
     def getProfilesAndConnectors(self, features):
         """Get the drilling profiles and its connectors"""
         profiles = []
-        x = features[0].attribute('xcoord')
-        y = features[0].attribute('ycoord')
-        for f in features:
-            # The x-position (xp) of the drilling profile is the distance
-            # to the previous coordinate. We start with xp = 0.
-            # The y-position of the profile is the elevation (z-coordinate).
-            xp = sqrt((f.attribute('xcoord') - x)**2 + (f.attribute('ycoord') - y)**2)
-            yp = f.attribute('zcoorddb') * 100 # convert to cm
-            x = f.attribute('xcoord')
-            y = f.attribute('ycoord')
-            profiles.append(self._getProfile(f, xp, yp))
+        if len(features) > 0:
+            x = features[0].attribute('xcoord')
+            y = features[0].attribute('ycoord')
+            for f in features:
+                # The x-position (xp) of the drilling profile is the distance
+                # to the previous coordinate. We start with xp = 0.
+                # The y-position of the profile is the elevation (z-coordinate).
+                xp = sqrt((f.attribute('xcoord') - x)**2 + (f.attribute('ycoord') - y)**2)
+                yp = f.attribute('zcoorddb') * 100 # convert to cm
+                x = f.attribute('xcoord')
+                y = f.attribute('ycoord')
+                profiles.append(self._getProfile(f, xp, yp))
 
         actualProfiles = []
         actualFeatures = []
