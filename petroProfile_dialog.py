@@ -49,11 +49,17 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.iface = iface
         self.scene = QtWidgets.QGraphicsScene()
-        self.drawProfiles()
         view = self.findChild(QtWidgets.QGraphicsView, "graphicsView")
         view.setScene(self.scene)
 
+    def showEvent(self, e):
+        """Override showEvent"""
+        super().showEvent(e)
+        self.drawProfiles()
+
     def drawProfiles(self):
+        """Draw the selected drilling profiles"""
+        self.scene.clear()
         features = self.iface.activeLayer().selectedFeatures()
         builder = ProfileBuilder(self.showMessage)
         pac = builder.getProfilesAndConnectors(features)
@@ -61,4 +67,5 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         painter.paint(pac, True)
 
     def showMessage(self, title, message, level):
+        """Display a message in the main window's messageBar"""
         self.iface.messageBar().pushMessage(title, message, level)
