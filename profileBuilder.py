@@ -189,8 +189,9 @@ class ProfileBuilder:
                         found = True
                     yRight = yRight - pRight.boxes[r].height
                     r = r + 1
-
-                connectors.append(c)
+                
+                if found:
+                    connectors.append(c)
             lgLeft = pLeft.boxes[l].group
             yLeft = yLeft - pLeft.boxes[l].height
 
@@ -201,18 +202,17 @@ class ProfileBuilder:
                 c.y1 = pLeft.y - pLeft.height()
 
                 # connect to last corresponding group on the right
+                found = False
                 rr = len(pRight.boxes) - 1
-                while rr >= r - 1:
-                    QgsMessageLog.logMessage("groupLeft: {}, groupRight: {}".format(pLeft.boxes[l].group, pRight.boxes[rr].group), level=Qgis.Info)
+                while (rr >= r - 1) and not found:
                     if pLeft.boxes[l].group == pRight.boxes[rr].group:
                         c.x2 = pRight.x
                         c.y2 = pRight.y - pRight.height()
-                        QgsMessageLog.logMessage("BREAK Profile.y {}, height: {}, y: {}".format(pRight.y, pRight.height(), c.y2), level=Qgis.Info)
-                        break
+                        found = True
                     rr = rr - 1
-
-                QgsMessageLog.logMessage("Profile.y {}, height: {}, y: {}".format(pRight.y, pRight.height(), c.y2), level=Qgis.Info)
-                connectors.append(c)
+                
+                if found:
+                    connectors.append(c)
 
             l = l + 1
 
