@@ -64,7 +64,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         builder = ProfileBuilder(self.showMessage)
         pac = builder.getProfilesAndConnectors(features)
         painter = ProfilePainter(self.scene)
-        painter.paint(pac, True)
+        painter.paint(pac, len(pac) == 1)
 
     def showMessage(self, title, message, level):
         """Display a message in the main window's messageBar"""
