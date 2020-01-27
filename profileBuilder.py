@@ -8,6 +8,7 @@ from qgis.PyQt.QtCore import QVariant
 from .geoCoreConfig import Config
 from .profile import Profile
 from .profileBox import ProfileBox
+from .connector import Connector
 
 class ProfileBuilder:
     """This class constructs the drilling profiles"""
@@ -146,7 +147,75 @@ class ProfileBuilder:
         """Multiple profiles need to be connected in the drawing"""
         if len(profiles) <= 1:
             return []
+
         connectors = []
+
+        i = 1 # we start with the second profile connecting it with the first
+        minLen = min(len(profiles), len(features))
+        while i < minLen:
+            cs = self._connectTwoProfiles(profiles[i - 1], profiles[i])
+            for c in cs:
+                connectors.append(c)
+            i = i + 1
+
+        return connectors
+
+    def _connectTwoProfiles(self, pLeft, pRight):
+        """Get connectors for left and right profile"""
+        connectors = []
+
+        # last group on the left and right
+        lgLeft = None
+
+        # y-coordinates
+        yLeft = pLeft.y
+        yRight = pRight.y
+
+        l = 0
+        r = 0
+        while l < len(pLeft.boxes):
+            if lgLeft != pLeft.boxes[l].group:
+                # new connector
+                c = Connector()
+                c.x1 = pLeft.x + pLeft.boxes[l].width
+                c.y1 = yLeft
+
+                # find the corresponding group on the right side
+                found = False
+                while (r < len(pRight.boxes)) and not found:
+                    if pLeft.boxes[l].group == pRight.boxes[r].group:
+                        c.x2 = pRight.x
+                        c.y2 = yRight
+                        found = True
+                    yRight = yRight - pRight.boxes[r].height
+                    r = r + 1
+
+                connectors.append(c)
+            lgLeft = pLeft.boxes[l].group
+            yLeft = yLeft - pLeft.boxes[l].height
+
+            if l == len(pLeft.boxes) - 1:
+                # last profile box on the left
+                c = Connector()
+                c.x1 = pLeft.x + pLeft.boxes[l].width
+                c.y1 = pLeft.y - pLeft.height()
+
+                # connect to last corresponding group on the right
+                rr = len(pRight.boxes) - 1
+                while rr >= r - 1:
+                    QgsMessageLog.logMessage("groupLeft: {}, groupRight: {}".format(pLeft.boxes[l].group, pRight.boxes[rr].group), level=Qgis.Info)
+                    if pLeft.boxes[l].group == pRight.boxes[rr].group:
+                        c.x2 = pRight.x
+                        c.y2 = pRight.y - pRight.height()
+                        QgsMessageLog.logMessage("BREAK Profile.y {}, height: {}, y: {}".format(pRight.y, pRight.height(), c.y2), level=Qgis.Info)
+                        break
+                    rr = rr - 1
+
+                QgsMessageLog.logMessage("Profile.y {}, height: {}, y: {}".format(pRight.y, pRight.height(), c.y2), level=Qgis.Info)
+                connectors.append(c)
+
+            l = l + 1
+
         return connectors
 
     def showErrorMessage(self, title, message):
