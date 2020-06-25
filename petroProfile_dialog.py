@@ -29,7 +29,7 @@ from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtWidgets import QAction, QMenu, QFileDialog
 from qgis.PyQt.QtGui import QPainter, QImage, QColor
 from qgis.PyQt.QtSvg import QSvgGenerator
-from qgis.PyQt.QtCore import QRectF
+from qgis.PyQt.QtCore import QRectF, QEvent
 from qgis.core import Qgis, QgsMessageLog
 
 from .profileBuilder import ProfileBuilder
@@ -59,8 +59,9 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
     def _setupScene(self):
         """Setup a new scene"""
         self.scene = QtWidgets.QGraphicsScene()
-        view = self.findChild(QtWidgets.QGraphicsView, "graphicsView")
-        view.setScene(self.scene)
+        self.view = self.findChild(QtWidgets.QGraphicsView, "graphicsView")
+        self.view.setScene(self.scene)
+        self.view.installEventFilter(self)
 
     def _getActions(self):
         """Get actions that are displayed in the context menu"""
@@ -81,6 +82,28 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         """Override showEvent"""
         super().showEvent(e)
         self.drawProfiles()
+
+    def wheelEvent(self, e):
+        """Zoom in/out"""
+        delta = e.angleDelta()
+        if delta.isNull():
+            return        
+        s =  1.0
+        if delta.y() > 0:
+            s = 1.15
+        else:
+            s = 0.85 
+        self.view.scale(s, s)
+
+    def mousePressEvent(self, e):
+        QgsMessageLog.logMessage("button pressed {}".format(e.button()), level=Qgis.Info)
+
+    def eventFilter(self, obj, e):
+        QgsMessageLog.logMessage("filter {}".format(e.type()), level=Qgis.Info)
+        if e.type() == QEvent.Wheel:
+            return True
+        else:
+            return super().eventFilter(obj, e)
 
     def _exportToFile(self):
         """Export drawing to file"""
@@ -139,7 +162,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         pac = builder.getProfilesAndConnectors(features)
         painter = ProfilePainter(self.scene)
         painter.paint(pac, len(pac) == 1)
-        self.scene.setSceneRect(self.scene.itemsBoundingRect())
+        self.scene.setSceneRect(self.scene.itemsBoundingRect())        
 
     def showMessage(self, title, message, level):
         """Display a message in the main window's messageBar"""
