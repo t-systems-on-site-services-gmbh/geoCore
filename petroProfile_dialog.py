@@ -95,11 +95,8 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
             s = 0.85 
         self.view.scale(s, s)
 
-    def mousePressEvent(self, e):
-        QgsMessageLog.logMessage("button pressed {}".format(e.button()), level=Qgis.Info)
-
     def eventFilter(self, obj, e):
-        QgsMessageLog.logMessage("filter {}".format(e.type()), level=Qgis.Info)
+        #QgsMessageLog.logMessage("filter {}".format(e.type()), level=Qgis.Info)
         if e.type() == QEvent.Wheel:
             return True
         else:
@@ -162,6 +159,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         pac = builder.getProfilesAndConnectors(features)
         painter = ProfilePainter(self.scene)
         painter.paint(pac, len(pac) == 1)
+        self.view.resetTransform()
         self.scene.setSceneRect(self.scene.itemsBoundingRect())        
 
     def showMessage(self, title, message, level):
