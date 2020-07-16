@@ -61,7 +61,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         self.scene = QtWidgets.QGraphicsScene()
         self.view = self.findChild(QtWidgets.QGraphicsView, "graphicsView")
         self.view.setScene(self.scene)
-        self.scene.installEventFilter(self)
+        self.view.viewport().installEventFilter(self)
 
     def _getActions(self):
         """Get actions that are displayed in the context menu"""
@@ -190,7 +190,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         painter = ProfilePainter(self.scene)
         painter.paint(pac, len(pac) == 1)
         self.view.resetTransform()
-        self.scene.setSceneRect(self.scene.itemsBoundingRect())        
+        self.view.setSceneRect(self.scene.itemsBoundingRect())
 
     def showMessage(self, title, message, level):
         """Display a message in the main window's messageBar"""
