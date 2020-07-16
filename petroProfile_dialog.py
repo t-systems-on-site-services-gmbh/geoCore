@@ -151,57 +151,46 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         if (name is None) or (len(name) == 0):
             return
         
-        suffix = Path(name).suffix
-        if len(suffix) == 0:
-            return
-        if suffix.upper() == ".SVG":
-            self._exportAsSvg(name)
+        if Path(name).suffix.upper() == ".SVG":
+            self._exportWithPainter(name, self._svgPaintDevice)
         else:
-            self._exportAsImg(name)
+            self._exportWithPainter(name, self._imgPaintDevice)
 
-    def _exportAsSvg(self, name):
-        try:
-            self.scene.clearSelection()
-            totalRect = self.scene.sceneRect()
-            margin = 5
-            totalRect.adjust(-margin, -margin, margin, margin)
+    def _svgPaintDevice(self, name, sourceRect, targetRect):
+        """Get QSvgGenerator as paint device"""
+        generator = QSvgGenerator()
+        generator.setDescription("This SVG was generated with the petroProfile plugin of QGIS, written by T-Systems on site services GmbH")
+        generator.setTitle("petroProfile")
+        generator.setSize(sourceRect.size().toSize())
+        generator.setViewBox(targetRect)
+        generator.setFileName(name)
+        return generator
 
-            svgRect = QRectF(0, 0, totalRect.width(), totalRect.height())
+    def _imgPaintDevice(self, name, sourceRect, targetRect):
+        """Get QImage as paint device"""
+        img = QImage(sourceRect.width(), sourceRect.height(), QImage.Format_ARGB32)
+        img.fill(QColor("transparent"))
+        return img
 
-            generator = QSvgGenerator()
-            generator.setDescription("This SVG was generated with the petroProfile plugin of QGIS, written by T-Systems on site services GmbH")
-            generator.setTitle("petroProfile")            
-            generator.setSize(totalRect.size().toSize())
-            generator.setViewBox(svgRect)
-            generator.setFileName(name)
-
-            painter = QPainter()
-            painter.begin(generator)
-            self.scene.render(painter, svgRect, totalRect)
-            painter.end()
-
-            QgsMessageLog.logMessage("exported SVG to {}".format(name), level=Qgis.Info)
-            QgsMessageLog.logMessage("svgRect: {}".format(svgRect), level=Qgis.Info)
-            QgsMessageLog.logMessage("totalRect: {}".format(totalRect), level=Qgis.Info)
-        except:
-            self.showMessage("Error", "Failed to export to {}".format(name), Qgis.Critical)
-
-    def _exportAsImg(self, name):
+    def _exportWithPainter(self, name, getPaintDevice):
         """Export as image file"""
         try:
             self.scene.clearSelection()
-            size = self.scene.sceneRect().size().toSize()
             margin = 5
+            sourceRect = self.scene.sceneRect()            
+            sourceRect.adjust(-margin, -margin, margin, margin)
 
-            img = QImage(size.width() + margin, size.height() + margin, QImage.Format_ARGB32)
-            img.fill(QColor("transparent"))
+            targetRect = QRectF(0, 0, sourceRect.width(), sourceRect.height())
+
+            pd = getPaintDevice(name, sourceRect, targetRect)
 
             painter = QPainter()
-            painter.begin(img)
+            painter.begin(pd)
             painter.setRenderHint(QPainter.Antialiasing)
-            self.scene.render(painter, QRectF(img.rect()))
+            self.scene.render(painter, targetRect, sourceRect)
             painter.end()
-            img.save(name)
+            if hasattr(pd, 'save') and callable(pd.save):
+                pd.save(name)
             QgsMessageLog.logMessage("exported to {}".format(name), level=Qgis.Info)
         except:
             self.showMessage("Error", "Failed to export to {}".format(name), Qgis.Critical)
@@ -210,7 +199,19 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         """Get file name via file dialog"""
         home = str(Path.home())
         name = QFileDialog.getSaveFileName(self, "Export to file", home, "Images (*.png *.jpg);;Vector graphics (*.svg)")
-        return name[0]
+
+        if (name is None) or (len(name) == 0):
+            return name
+
+        filename = name[0]
+        suffix = Path(filename).suffix
+        if len(suffix) == 0:
+            if "svg" in name[1]:
+                filename = filname + ".svg"
+            else:
+                filename = filname + ".png"
+
+        return filename
 
     def drawProfilesNorthSouth(self):
         self._nsAction.setChecked(True)
