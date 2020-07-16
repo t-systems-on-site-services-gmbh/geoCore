@@ -11,4 +11,3 @@ The plugin constructs a graphical representation of petrographic drilling profil
 * Export to SVG
 * Skalieren von x- und y-Achse beim Export
 * Darstellung von Symbolen/Texturen in einer Box
-* Drucken

@@ -154,18 +154,37 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         suffix = Path(name).suffix
         if len(suffix) == 0:
             return
-        if suffix.upper() == ".svg":
+        if suffix.upper() == ".SVG":
             self._exportAsSvg(name)
         else:
             self._exportAsImg(name)
 
     def _exportAsSvg(self, name):
-        #generator = QSvgGenerator()
-        #generator.setFileName("C:\\temp\\t.svg")
-        #generator.setDescription("This SVG was generated with the petroProfile plugin of QGis, written by T-Systems on site services GmbH")
-        #generator.setTitle("petroProfile")        
-        #generator.setViewBox(self.scene.sceneRect())
-        pass
+        try:
+            self.scene.clearSelection()
+            totalRect = self.scene.sceneRect()
+            margin = 5
+            totalRect.adjust(-margin, -margin, margin, margin)
+
+            svgRect = QRectF(0, 0, totalRect.width(), totalRect.height())
+
+            generator = QSvgGenerator()
+            generator.setDescription("This SVG was generated with the petroProfile plugin of QGIS, written by T-Systems on site services GmbH")
+            generator.setTitle("petroProfile")            
+            generator.setSize(totalRect.size().toSize())
+            generator.setViewBox(svgRect)
+            generator.setFileName(name)
+
+            painter = QPainter()
+            painter.begin(generator)
+            self.scene.render(painter, svgRect, totalRect)
+            painter.end()
+
+            QgsMessageLog.logMessage("exported SVG to {}".format(name), level=Qgis.Info)
+            QgsMessageLog.logMessage("svgRect: {}".format(svgRect), level=Qgis.Info)
+            QgsMessageLog.logMessage("totalRect: {}".format(totalRect), level=Qgis.Info)
+        except:
+            self.showMessage("Error", "Failed to export to {}".format(name), Qgis.Critical)
 
     def _exportAsImg(self, name):
         """Export as image file"""
@@ -191,7 +210,6 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         """Get file name via file dialog"""
         home = str(Path.home())
         name = QFileDialog.getSaveFileName(self, "Export to file", home, "Images (*.png *.jpg);;Vector graphics (*.svg)")
-        QgsMessageLog.logMessage("name {}".format(name), level=Qgis.Info)
         return name[0]
 
     def drawProfilesNorthSouth(self):
