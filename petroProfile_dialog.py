@@ -97,37 +97,6 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def eventFilter(self, obj, e):        
         if e.type() == QEvent.Wheel:
-            QgsMessageLog.logMessage("filter {}".format(e.type()), level=Qgis.Info)
-            return True
-        elif e.type() == QEvent.GraphicsSceneWheel:
-            QgsMessageLog.logMessage("filter {}".format(e.type()), level=Qgis.Info)
-            return True
-        elif e.type() == QEvent.GraphicsSceneDragEnter:
-            QgsMessageLog.logMessage("filter {}".format(e.type()), level=Qgis.Info)
-            return True
-        elif e.type() == QEvent.GraphicsSceneDragLeave:
-            QgsMessageLog.logMessage("filter {}".format(e.type()), level=Qgis.Info)
-            return True
-        elif e.type() == QEvent.DragMove:
-            QgsMessageLog.logMessage("filter {}".format(e.type()), level=Qgis.Info)
-            return True
-        elif e.type() == QEvent.GraphicsSceneDragMove:
-            QgsMessageLog.logMessage("filter {}".format(e.type()), level=Qgis.Info)
-            return True
-        elif e.type() == QEvent.GrabMouse:
-            QgsMessageLog.logMessage("filter {}".format(e.type()), level=Qgis.Info)
-            return True
-        elif e.type() == QEvent.GraphicsSceneMousePress:
-            QgsMessageLog.logMessage("filter {}".format(e.type()), level=Qgis.Info)
-            return True
-        elif e.type() == QEvent.GraphicsSceneMouseMove:
-            QgsMessageLog.logMessage("filter {}".format(e.type()), level=Qgis.Info)
-            return True
-        elif e.type() == QEvent.Scroll:
-            QgsMessageLog.logMessage("filter {}".format(e.type()), level=Qgis.Info)
-            return True
-        elif e.type() == QEvent.ScrollPrepare:
-            QgsMessageLog.logMessage("filter {}".format(e.type()), level=Qgis.Info)
             return True
         else:
             return super().eventFilter(obj, e)
