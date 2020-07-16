@@ -8,8 +8,7 @@ The plugin constructs a graphical representation of petrographic drilling profil
 
 * Bohrung in Stammdaten enthalten, aber nicht in Schichtdaten -> Fehler
   *Beispiel benötigt.*
-* Sortieren von Bohrprofilen nach Himmelsrichtungen
-* Zoom (Strg + Mousewheel)
 * Export to SVG
+* Skalieren von x- und y-Achse beim Export
 * Darstellung von Symbolen/Texturen in einer Box
 * Drucken

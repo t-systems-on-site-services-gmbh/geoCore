@@ -26,7 +26,7 @@ from pathlib import Path
 
 from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
-from qgis.PyQt.QtWidgets import QAction, QMenu, QFileDialog
+from qgis.PyQt.QtWidgets import QAction, QActionGroup, QMenu, QFileDialog
 from qgis.PyQt.QtGui import QPainter, QImage, QColor
 from qgis.PyQt.QtSvg import QSvgGenerator
 from qgis.PyQt.QtCore import QRectF, QEvent
@@ -55,6 +55,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.iface = iface
         self._setupScene()
+        self._setupGeoDirectionActions()
 
     def _setupScene(self):
         """Setup a new scene"""
@@ -63,12 +64,55 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         self.view.setScene(self.scene)
         self.view.viewport().installEventFilter(self)
 
+    def _setupGeoDirectionActions(self):
+        self._nsAction = QAction("North -> South", self)
+        self._nsAction.triggered.connect(self.drawProfilesNorthSouth)
+        self._nsAction.setEnabled(True)
+        self._nsAction.setCheckable(True)
+
+        self._snAction = QAction("South -> North", self)
+        self._snAction.triggered.connect(self.drawProfilesSouthNorth)
+        self._snAction.setEnabled(True)
+        self._snAction.setCheckable(True)
+
+        self._weAction = QAction("West -> East", self)
+        self._weAction.triggered.connect(self.drawProfilesWestEast)
+        self._weAction.setEnabled(True)
+        self._weAction.setCheckable(True)
+
+        self._ewAction = QAction("East -> West", self)
+        self._ewAction.triggered.connect(self.drawProfilesEastWest)
+        self._ewAction.setEnabled(True)
+        self._ewAction.setCheckable(True)
+
     def _getActions(self):
         """Get actions that are displayed in the context menu"""
+        actions = []
+
         exportAction = QAction("Export as...", self)
         exportAction.triggered.connect(self._exportToFile)
         exportAction.setEnabled(True)
-        return [exportAction]
+        actions.append(exportAction)
+
+        sep = QAction("", self)
+        sep.setSeparator(True)
+        actions.append(sep)
+
+        group = QActionGroup(self)
+        
+        group.addAction(self._nsAction)
+        actions.append(self._nsAction)
+        
+        group.addAction(self._snAction)
+        actions.append(self._snAction)
+
+        group.addAction(self._weAction)
+        actions.append(self._weAction)
+
+        group.addAction(self._ewAction)
+        actions.append(self._ewAction)
+
+        return actions
 
     def contextMenuEvent(self, e):
         """Show context menu"""
@@ -81,7 +125,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
     def showEvent(self, e):
         """Override showEvent"""
         super().showEvent(e)
-        self.drawProfiles()
+        self.drawProfilesNorthSouth()
 
     def wheelEvent(self, e):
         """Zoom in/out"""
@@ -150,16 +194,40 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         QgsMessageLog.logMessage("name {}".format(name), level=Qgis.Info)
         return name[0]
 
-    def drawProfiles(self):
+    def drawProfilesNorthSouth(self):
+        self._nsAction.setChecked(True)
+        crit = lambda f: -f.attribute('ycoord') # north -> south
+        self._drawProfiles(crit)
+
+    def drawProfilesSouthNorth(self):
+        self._snAction.setChecked(True)
+        crit = lambda f: f.attribute('ycoord') # south -> north
+        self._drawProfiles(crit)
+
+    def drawProfilesWestEast(self):
+        self._weAction.setChecked(True)
+        crit = lambda f: f.attribute('xcoord') # west -> east
+        self._drawProfiles(crit)
+
+    def drawProfilesEastWest(self):
+        self._ewAction.setChecked(True)
+        crit = lambda f: -f.attribute('xcoord') # east -> west
+        self._drawProfiles(crit)
+
+    def _drawProfiles(self, sortCrit):
         """Draw the selected drilling profiles"""
         self.scene.clear()
-        features = self.iface.activeLayer().selectedFeatures()
+        features = self._getSortedDrillingPositions(sortCrit)
         builder = ProfileBuilder(self.showMessage)
         pac = builder.getProfilesAndConnectors(features)
         painter = ProfilePainter(self.scene)
         painter.paint(pac, len(pac) == 1)
         self.view.resetTransform()
         self.view.setSceneRect(self.scene.itemsBoundingRect())
+
+    def _getSortedDrillingPositions(self, crit):
+        features = self.iface.activeLayer().selectedFeatures()        
+        return sorted(features, key=crit)
 
     def showMessage(self, title, message, level):
         """Display a message in the main window's messageBar"""
