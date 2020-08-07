@@ -61,7 +61,7 @@ class PetroProfile:
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&Petrographic Profile')
+        self.menu = self.tr(u'&geoCore')
 
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
@@ -81,7 +81,7 @@ class PetroProfile:
         :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('PetroProfile', message)
+        return QCoreApplication.translate('geoCore', message)
 
 
     def add_action(
@@ -161,7 +161,7 @@ class PetroProfile:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/petroProfile/icon.png'
+        icon_path = ':/plugins/geoCore/icon.png'
         self.add_action(
             icon_path,
             text=self.tr(u'Show drilling profile'),
@@ -176,7 +176,7 @@ class PetroProfile:
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
             self.iface.removePluginMenu(
-                self.tr(u'&Petrographic Profile'),
+                self.tr(u'&geoCore'),
                 action)
             self.iface.removeToolBarIcon(action)
 
