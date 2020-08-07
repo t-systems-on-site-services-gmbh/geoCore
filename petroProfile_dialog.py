@@ -202,10 +202,10 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
     def _getFilename(self):
         """Get file name via file dialog"""
         home = str(Path.home())
-        name = QFileDialog.getSaveFileName(self, "Export to file", home, "Images (*.png *.jpg);;Vector graphics (*.svg)")
+        name = QFileDialog.getSaveFileName(self, "Export to file", home, "Vector graphics (*.svg);;Images (*.png *.jpg)")
 
-        if (name is None) or (len(name) == 0):
-            return name
+        if (name is None) or (len(name[0]) == 0):
+            return None
 
         filename = name[0]
         suffix = Path(filename).suffix
