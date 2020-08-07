@@ -30,7 +30,7 @@ from pathlib import Path
 
 from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
-from qgis.PyQt.QtWidgets import QAction, QActionGroup, QMenu, QFileDialog
+from qgis.PyQt.QtWidgets import QAction, QActionGroup, QMenu, QFileDialog, QMessageBox
 from qgis.PyQt.QtGui import QPainter, QImage, QColor
 from qgis.PyQt.QtSvg import QSvgGenerator
 from qgis.PyQt.QtCore import QRectF, QEvent
@@ -115,6 +115,15 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
 
         group.addAction(self._ewAction)
         actions.append(self._ewAction)
+
+        sepAbout = QAction("", self)
+        sepAbout.setSeparator(True)
+        actions.append(sepAbout)
+
+        aboutAction = QAction("About...", self)
+        aboutAction.triggered.connect(self._aboutPlugin)
+        aboutAction.setEnabled(True)
+        actions.append(aboutAction)
 
         return actions
 
@@ -251,6 +260,17 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
     def _getSortedDrillingPositions(self, crit):
         features = self.iface.activeLayer().selectedFeatures()        
         return sorted(features, key=crit)
+
+    def _aboutPlugin(self):
+        QMessageBox.about(self, "About", 
+            """<b>geoCore</b><br>
+            Copyright (C) 2019,2020  Gerrit Bette, T-Systems on site services GmbH<br>
+            This program comes with ABSOLUTELY NO WARRANTY. 
+            This is free software, and you are welcome to redistribute it
+            under certain conditions; see 
+            <a href="https://www.gnu.org/licenses/gpl-3.0-standalone.html">
+            https://www.gnu.org/licenses</a> for details.
+            """)
 
     def showMessage(self, title, message, level):
         """Display a message in the main window's messageBar"""
