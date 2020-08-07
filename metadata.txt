@@ -7,7 +7,7 @@ name=geoCore
 qgisMinimumVersion=3.10
 description=Constructs a graphical representation of drilling profiles
 version=0.2
-author=Gerrit Bette and T-Systems on site service GmbH
+author=T-Systems on site service GmbH
 email=gerrit.bette@t-systems.com
 
 about=geoCore constructs a graphical representation of drilling profiles. The plugin depends on PyYAML (https://pypi.org/project/PyYAML/) and naturally on QGIS and thus PyQt.
