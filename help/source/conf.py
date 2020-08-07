@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# PetroProfile documentation build configuration file, created by
+# geoCore documentation build configuration file, created by
 # sphinx-quickstart on Sun Feb 12 17:11:03 2012.
 #
 # This file is execfile()d with the current directory set to its containing dir.
