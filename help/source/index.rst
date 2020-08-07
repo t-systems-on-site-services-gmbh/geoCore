@@ -10,6 +10,7 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
+   _static/usage
 
 Indices and tables
 ==================
