@@ -13,8 +13,8 @@ email=gerrit.bette@t-systems.com
 about=geoCore constructs a graphical representation of drilling profiles. The plugin depends on PyYAML (https://pypi.org/project/PyYAML/) and naturally on QGIS and thus PyQt.
 
 
-tracker=http://bugs
-repository=http://repo
+tracker=https://github.com/t-systems-on-site-services-gmbh/geoCore/issues
+repository=https://github.com/t-systems-on-site-services-gmbh/geoCore/
 # End of mandatory metadata
 
 # Recommended items:
@@ -26,7 +26,7 @@ hasProcessingProvider=no
 # Tags are comma separated with spaces allowed
 tags=Bohrprofil, core, profile, drilling, onsite, NIhK
 
-homepage=http://homepage
+homepage=https://github.com/t-systems-on-site-services-gmbh/geoCore/
 category=Plugins
 icon=icon.png
 # experimental flag
