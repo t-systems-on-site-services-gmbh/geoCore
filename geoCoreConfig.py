@@ -30,8 +30,8 @@ class Config:
         self.showMessage = showMessage
         self.myDir = os.path.dirname(__file__)
 
-        self.settings = self._readConfig(os.path.join(self.myDir, "./config.yml"))
-        self.geoCore = self._readConfig(os.path.join(self.myDir, "geoCore", "geoCore.yml"))
+        self.settings = self._readConfig(os.path.join(self.myDir, "config", "config.yml"))
+        self.geoCore = self._readConfig(os.path.join(self.myDir, "config/geoCore", "geoCore.yml"))
 
     def _readConfig(self, fileName):
         """Return a YML file's contents.
