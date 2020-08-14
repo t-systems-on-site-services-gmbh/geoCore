@@ -14,4 +14,5 @@ geoCore was developed in cooperation with the Niedersächsisches Institut für h
 ## License
 
 GNU General Public License v3.0 or later
+
 See [LICENSE](LICENSE)
