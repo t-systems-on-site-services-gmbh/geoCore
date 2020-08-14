@@ -1,6 +1,6 @@
 # geoCore
 
-QGIS Plugin
+A QGIS Plugin
 
 The plugin constructs a graphical representation of petrographic drilling profiles.
 
@@ -11,9 +11,7 @@ geoCore was developed in cooperation with the Niedersächsisches Institut für h
 * PyYAML (https://pypi.org/project/PyYAML/)
 * QGIS and PyQt (https://www.qgis.org)
 
-## TODO
+## License
 
-* Independently scale x- and y-axis for the export
-* Display symbols/textures in a profile box
-* Make content of a description configurable
-* Add scales/rulers
+GNU General Public License v3.0 or later
+See [LICENSE](LICENSE)
