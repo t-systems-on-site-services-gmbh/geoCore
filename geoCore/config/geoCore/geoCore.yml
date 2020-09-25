@@ -18,41 +18,41 @@
 
 boxes:
     S: #shortname
-        longname: Sand
+        longname: sand
         width: 1.5
     T: #shortname
-        longname: Ton
+        longname: clay
         width: 1.0
     U: #shortname
-        longname: Schluff
+        longname: silt
         width: 1.25
     G: #shortname
-        longname: Kies
+        longname: gravel
         width: 1.75
     H: #shortname
-        longname: Torf
+        longname: peat
         width: 2.0
 
 descriptions:
     u4: #shortname
-        longname: stark schluffig
+        longname: strong silty
     h: #shortname
-        longname: humos
+        longname: humic
     fs: #shortname
-        longname: feinsandig
+        longname: fine sand
     u1: #shortname
-        longname: leicht schluffig
+        longname: slightly silty
     u2: #shortname
-        longname: vermehrt schluffig
+        longname: increasingly silty
     t1: #shortname
-        longname: leicht tonig
+        longname: slightly clayey
     lam: #shortname
-        longname: laminiert
+        longname: laminated
         texture: symbols/lam.svg
     as: #shortname
         longname: articulated shell
     wood: #shortname
-        longname: Holz
+        longname: wood
         texture: symbols/wood.svg
 
 facies:
@@ -61,14 +61,14 @@ facies:
 
 colors:
     gr: #shortname
-        longname: grau
+        longname: gray
         code: "#c9c8c8"
     br: #shortname
-        longname: braun
+        longname: brown
         code: "#b6afa1"
     ge: #shortname
-        longname: gelb
+        longname: yellow
         code: "#f6e8a1"
     gru: #shortname
-        longname: grün
+        longname: green
         code: "#5f9288"
