@@ -5,7 +5,7 @@
 1. T-Systems on site services GmbH
 2. Niedersächsisches Institut für historische Küstenforschung, Viktoriastr. 26/28, 26386 Wilhelmshaven
 
-The QGIS Plugin geoCore is under development by [T-Systems-on-site-services-gmbh](https://www.t-systems-onsite.de/) based on the idea of the [Lower Saxony Institute for Historical Coastal Research Wilhelmshaven (NIhK)](www.nihk.de).
+The QGIS Plugin geoCore is under development by [T-Systems on site services GmbH](https://www.t-systems-onsite.de/) based on the idea of the [Lower Saxony Institute for Historical Coastal Research Wilhelmshaven (NIhK)](www.nihk.de).
 
 ## Aim
 
