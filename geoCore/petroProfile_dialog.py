@@ -250,7 +250,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         """Draw the selected drilling profiles"""
         self.scene.clear()
         features = self._getSortedDrillingPositions(sortCrit)
-        builder = ProfileBuilder(self.showMessage)
+        builder = ProfileBuilder(self.iface.activeLayer().name(), self.showMessage)
         pac = builder.getProfilesAndConnectors(features)
         painter = ProfilePainter(self.scene)
         painter.paint(pac, len(pac) == 1)

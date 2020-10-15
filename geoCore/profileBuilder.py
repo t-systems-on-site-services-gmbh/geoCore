@@ -32,9 +32,10 @@ from .connector import Connector
 class ProfileBuilder:
     """This class constructs the drilling profiles"""
 
-    def __init__(self, showMessage):
+    def __init__(self, layerName, showMessage):
         """Features are the 'Stammdaten', i.e. data regarding the drilling profiles.
         config is the configuration element containing metadata to profiles."""
+        self.nameLayerSchichtdaten = "{}_data".format(layerName)
         self.showMessage = showMessage
         self.petroPattern = re.compile(r"(\w+)\s*(\(.*\))?", re.IGNORECASE)
         self.config = Config(self.showErrorMessage)
@@ -43,10 +44,10 @@ class ProfileBuilder:
         """Get the Schichtdaten corresponding to given drilling profile"""
         qex = QgsExpression(QgsExpression().createFieldEqualityExpression("ID", profileId))
         qfr = QgsFeatureRequest(qex)
-        layerSchichtdaten = QgsProject().instance().mapLayersByName(self.config.settings["layerSchichtdaten"])
+        layerSchichtdaten = QgsProject().instance().mapLayersByName(self.nameLayerSchichtdaten)
 
         if len(layerSchichtdaten) == 0:
-            self.showErrorMessage("Error", "Layer {} not found.".format(self.config.settings["layerSchichtdaten"]))
+            self.showErrorMessage("Error", "Layer {} not found.".format(self.nameLayerSchichtdaten))
             return None
 
         # we may want to sort the features by "schichtnr"
