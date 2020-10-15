@@ -76,16 +76,16 @@ class ProfileBuilder:
         """Get the drilling profiles and its connectors"""
         profiles = []
         if len(features) > 0:
-            x = features[0].attribute('xcoord')
-            y = features[0].attribute('ycoord')
+            x = features[0].attribute(self.config.settings["xCoord"])
+            y = features[0].attribute(self.config.settings["yCoord"])
             for f in features:
                 # The x-position (xp) of the drilling profile is the distance
                 # to the previous coordinate. We start with xp = 0.
                 # The y-position of the profile is the elevation (z-coordinate).
-                xp = sqrt((f.attribute('xcoord') - x)**2 + (f.attribute('ycoord') - y)**2)
-                yp = f.attribute('zcoorddb') * 100 # convert to cm
-                x = f.attribute('xcoord')
-                y = f.attribute('ycoord')
+                xp = sqrt((f.attribute(self.config.settings["xCoord"]) - x)**2 + (f.attribute(self.config.settings["yCoord"]) - y)**2)
+                yp = f.attribute(self.config.settings["zCoord"]) * 100 # convert to cm
+                x = f.attribute(self.config.settings["xCoord"])
+                y = f.attribute(self.config.settings["yCoord"])
                 profiles.append(self._getProfile(f, xp, yp))
 
         actualProfiles = []
@@ -118,28 +118,28 @@ class ProfileBuilder:
         facies = self.config.geoCore['facies']
         layerAttributes = self._getLayerAttributes(schichtdaten)
         for l in layerAttributes:
-            pb = ProfileBox(l['schichtnr'])
-            pb.group = l['gruppierung']
-            pb.isLast = l['schichtnr'] == len(layerAttributes)
+            pb = ProfileBox(l[self.config.settings["layerNo"]])
+            pb.group = l[self.config.settings["group"]]
+            pb.isLast = l[self.config.settings["layerNo"]] == len(layerAttributes)
             pb.y = y
-            pb.height = l['tiefe bis']-l['tiefe von']
-            pb.depth = l['tiefe bis']
+            pb.height = l[self.config.settings["depthTo"]]-l[self.config.settings["depthFrom"]]
+            pb.depth = l[self.config.settings["depthTo"]]
 
-            gg, kg = self._splitPetrographie(l['petrographie'])
+            gg, kg = self._splitPetrographie(l[self.config.settings["petrography"]])
             pb.width = boxes[gg]['width']
 
-            color = self._cfgLookup(colors, l['farbe'])
+            color = self._cfgLookup(colors, l[self.config.settings["color"]])
             pb.color = self._cfgLookup(color, 'code')
             pb.texture = self._cfgLookup(color, 'texture', showError=False)
 
             ggDict = self._cfgLookup(boxes, gg)
             infoList = []
-            infoList.append(self._cfgLookup(facies, l['facies']))
+            infoList.append(self._cfgLookup(facies, l[self.config.settings["facies"]]))
             infoList.append(self._cfgLookup(ggDict, 'longname'))
             for k in kg:
                 kgDict = self._cfgLookup(descriptions, k)
                 infoList.append(self._cfgLookup(kgDict, 'longname'))
-            infoList.append(l['beschreibung'])
+            infoList.append(l[self.config.settings["comment"]])
             infoList.append(self._cfgLookup(color, 'longname'))
             pb.info = ", ".join([i for i in infoList if (i is not None) and not isinstance(i, QVariant)])
 
