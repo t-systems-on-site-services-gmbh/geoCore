@@ -1,1 +1,16 @@
 layerSchichtdaten: Schichtdaten
+
+# columns in borehole data
+xCoord: xcoord
+yCoord: ycoord
+zCoord: zcoorddb
+
+# columns in layer data
+layerNo: schichtnr
+group: gruppierung
+depthFrom: tiefe von
+depthTo: tiefe bis
+petrography: petrographie
+color: farbe
+facies: facies
+comment: beschreibung
