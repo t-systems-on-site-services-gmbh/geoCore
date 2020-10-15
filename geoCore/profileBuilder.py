@@ -41,9 +41,7 @@ class ProfileBuilder:
 
     def _getSchichtdaten(self, profileId):
         """Get the Schichtdaten corresponding to given drilling profile"""
-        # As of now we need to chop off the leading letter.
-        # This might change in the future.
-        qex = QgsExpression(QgsExpression().createFieldEqualityExpression("ID", profileId[1:]))
+        qex = QgsExpression(QgsExpression().createFieldEqualityExpression("ID", profileId))
         qfr = QgsFeatureRequest(qex)
         layerSchichtdaten = QgsProject().instance().mapLayersByName(self.config.settings["layerSchichtdaten"])
 
