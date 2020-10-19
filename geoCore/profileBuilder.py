@@ -64,8 +64,6 @@ class ProfileBuilder:
         """Split the given Petrograhie into Großgruppe and Kleingruppe"""
         m = self.petroPattern.match(petro)
         gg = m.group(1) # Großgruppe
-        if gg == '':
-            gg = None
         kg = []
         k = m.group(2) # Kleingruppe
         if k is not None:
@@ -128,13 +126,13 @@ class ProfileBuilder:
             pb.height = l[self.config.settings["depthTo"]]-l[self.config.settings["depthFrom"]]
             pb.depth = l[self.config.settings["depthTo"]]
 
-            gg, kg = self._splitPetrographie(l[self.config.settings["petrography"]])
-            if gg is None:
+            gg, kg = self._splitPetrographie(l[self.config.settings["petrography"]])            
+            try:    
+                pb.width = boxes[gg]['width']
+            except KeyError:
                 pb.width = 0.1                
                 self.showMessage("Warning", "Missing main group in petrography: {}"
                     .format(l[self.config.settings["petrography"]]), Qgis.Warning)
-            else:
-                pb.width = boxes[gg]['width']
 
             color = self._cfgLookup(colors, l[self.config.settings["color"]])
             pb.color = self._cfgLookup(color, 'code')
@@ -142,11 +140,11 @@ class ProfileBuilder:
 
             ggDict = self._cfgLookup(boxes, gg)
             infoList = []
-            infoList.append(self._cfgLookup(facies, l[self.config.settings["facies"]]))
-            infoList.append(self._cfgLookup(ggDict, 'longname'))
+            infoList.append(self._cfgLookup(facies, l[self.config.settings["facies"]], errorValue=l[self.config.settings["facies"]]))
+            infoList.append(self._cfgLookup(ggDict, 'longname', errorValue=gg))
             for k in kg:
                 kgDict = self._cfgLookup(descriptions, k)
-                infoList.append(self._cfgLookup(kgDict, 'longname'))
+                infoList.append(self._cfgLookup(kgDict, 'longname', errorValue=k))
             infoList.append(l[self.config.settings["comment"]])
             infoList.append(self._cfgLookup(color, 'longname'))
             pb.info = ", ".join([i for i in infoList if (i is not None) and not isinstance(i, QVariant)])
@@ -158,7 +156,7 @@ class ProfileBuilder:
 
         return profile
 
-    def _cfgLookup(self, dictionary, key, showError=True):
+    def _cfgLookup(self, dictionary, key, showError=True, errorValue=None):
         """Return key from dictionary. Return None if key not found."""
         try:
             if (dictionary is not None) and not isinstance(key, QVariant):
@@ -166,7 +164,7 @@ class ProfileBuilder:
         except KeyError:
             if showError:
                 self.showErrorMessage("Error", "Key {} not found in config.".format(key))
-        return None
+        return errorValue
 
     def _connectProfiles(self, profiles, features):
         """Multiple profiles need to be connected in the drawing"""
