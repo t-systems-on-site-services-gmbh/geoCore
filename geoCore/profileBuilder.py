@@ -37,7 +37,7 @@ class ProfileBuilder:
         config is the configuration element containing metadata to profiles."""
         self.nameLayerSchichtdaten = "{}_data".format(layerName)
         self.showMessage = showMessage
-        self.petroPattern = re.compile(r"(\w+)\s*(\(.*\))?", re.IGNORECASE)
+        self.petroPattern = re.compile(r"(\w*)\s*(\(.*\))?", re.IGNORECASE)
         self.config = Config(self.showErrorMessage)
 
     def _getSchichtdaten(self, profileId):
@@ -64,6 +64,8 @@ class ProfileBuilder:
         """Split the given Petrograhie into Großgruppe and Kleingruppe"""
         m = self.petroPattern.match(petro)
         gg = m.group(1) # Großgruppe
+        if gg == '':
+            gg = None
         kg = []
         k = m.group(2) # Kleingruppe
         if k is not None:
@@ -127,7 +129,12 @@ class ProfileBuilder:
             pb.depth = l[self.config.settings["depthTo"]]
 
             gg, kg = self._splitPetrographie(l[self.config.settings["petrography"]])
-            pb.width = boxes[gg]['width']
+            if gg is None:
+                pb.width = 0.1                
+                self.showMessage("Warning", "Missing main group in petrography: {}"
+                    .format(l[self.config.settings["petrography"]]), Qgis.Warning)
+            else:
+                pb.width = boxes[gg]['width']
 
             color = self._cfgLookup(colors, l[self.config.settings["color"]])
             pb.color = self._cfgLookup(color, 'code')
