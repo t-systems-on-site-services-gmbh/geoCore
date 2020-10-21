@@ -35,6 +35,7 @@ class ProfileBox:
         self.width = 0.0
         self.height = 0.0
         self.depth = 0.0
+        self.name = ''
         self.info = ''
         self.color = ''
         self.texture = ''
