@@ -63,7 +63,7 @@ class Profile:
         if len(self.boxes) == 0:
             return
 
-        n = scene.addText(self.name)
+        n = scene.addText("{}".format(self.name)) # name might be an int
         n.adjustSize()
         n.setX(self.x * 10) # cm to mm
         n.setY(-self.y * 10 - n.boundingRect().height())
