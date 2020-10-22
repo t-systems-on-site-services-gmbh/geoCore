@@ -126,7 +126,8 @@ class ProfileBuilder:
             pb.height = l[self.config.settings["depthTo"]]-l[self.config.settings["depthFrom"]]
             pb.depth = l[self.config.settings["depthTo"]]
 
-            gg, kg = self._splitPetrographie(l[self.config.settings["petrography"]])            
+            gg, kg = self._splitPetrographie(l[self.config.settings["petrography"]])
+            pb.name = gg
             try:    
                 pb.width = boxes[gg]['width']
             except KeyError:
