@@ -41,8 +41,20 @@ class Profile:
     def paint(self, scene):
         """Paint boxes onto scene"""
         self._paintName(scene)
+        self._paintLegend(scene)
         for b in self.boxes:
             b.paint(scene, self.x)
+
+    def _paintLegend(self, scene):
+        yBottom = self.y - self.height()
+        yPos = (yBottom - self.margin) * -10 # cm to mm
+        for b in self.boxes:
+            xPos = (self.x + b.width) * 10
+            scene.addLine(xPos, yPos, xPos, yPos + 20)
+            n = scene.addText(b.name)
+            n.adjustSize()
+            n.setX(xPos - n.boundingRect().width() / 2)
+            n.setY(yPos + 20 + self.margin)
 
     def paintDescription(self, scene):
         """Paint description
@@ -86,7 +98,7 @@ class Profile:
         bottom = scene.addText("{:5.3n} mNHN".format(yBottom / 100))
         bottom.adjustSize()
         xpos = (self.x * 10) - bottom.textWidth() - (self.margin * 10) # cm to mm
-        ypos = -yBottom * 10 - (bottom.boundingRect().height() - 2)# cm to mm
+        ypos = -yBottom * 10 - (bottom.boundingRect().height() - 2) # cm to mm
         bottom.setX(xpos)
         bottom.setY(ypos)
         ypos = -yBottom * 10
