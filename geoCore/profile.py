@@ -46,6 +46,8 @@ class Profile:
             b.paint(scene, self.x)
 
     def _paintLegend(self, scene):
+        """Paint legend explaining the width of the individual 
+        layers/boxes below the profile"""
         yBottom = self.y - self.height()
         yPos = (yBottom - self.margin) * -10 # cm to mm
         for b in self.boxes:
