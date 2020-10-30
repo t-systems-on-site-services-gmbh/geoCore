@@ -88,7 +88,7 @@ class Profile:
             return
 
         yTop = self.y
-        top = scene.addText("{:5.3n} mNHN".format(yTop / 100))
+        top = scene.addText("{:.2f} mNHN".format(float(yTop) / 100))
         top.adjustSize()
         xpos = (self.x * 10) - top.textWidth() - (self.margin * 10) # cm to mm
         ypos = -yTop * 10 # cm to mm
@@ -97,7 +97,7 @@ class Profile:
         scene.addLine(xpos, ypos, 10 * (self.x - self.margin), ypos)
 
         yBottom = self.y - self.height()
-        bottom = scene.addText("{:5.3n} mNHN".format(yBottom / 100))
+        bottom = scene.addText("{:.2f} mNHN".format(float(yBottom) / 100))
         bottom.adjustSize()
         xpos = (self.x * 10) - bottom.textWidth() - (self.margin * 10) # cm to mm
         ypos = -yBottom * 10 - (bottom.boundingRect().height() - 2) # cm to mm

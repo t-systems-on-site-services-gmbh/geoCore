@@ -58,7 +58,7 @@ class ProfileBox:
     def _paintTopDepthMark(self, scene, xpos):
         """Paint depth at the top of the layer"""
         x, y, w, h = self._getPosAndDims(xpos)
-        d = scene.addText("{:<#5.3n} cm".format(self.depth - self.height))
+        d = scene.addText("{:.2f} cm".format(float(self.depth - self.height)))
         d.adjustSize()
         d.setX(x)
         d.setY(y - (d.boundingRect().height() - 2))
@@ -68,7 +68,7 @@ class ProfileBox:
     def _paintDepthMark(self, scene, xpos):
         """Paint depth at the bottom of the layer box"""
         x, y, w, h = self._getPosAndDims(xpos)
-        d = scene.addText("{:<#5.3n} cm".format(self.depth))
+        d = scene.addText("{:.2f} cm".format(float(self.depth)))
         d.adjustSize()
         d.setX(x)
         d.setY(y + h - (d.boundingRect().height() - 2))
