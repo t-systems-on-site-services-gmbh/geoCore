@@ -30,6 +30,7 @@ class Profile:
         """Initialize the profile"""
         self.x = 0.0
         self.y = 0.0 # in cm
+        self._yFac = 1.0
         self.margin = 1 # margin for description
         self.name = name
         self.boxes = []
@@ -37,6 +38,12 @@ class Profile:
     def height(self):
         """Return the height of the profile"""
         return reduce(lambda x, y: x + y, [b.height for b in self.boxes])
+
+    def setYFac(self, yFac):
+        """Set scaling factor for y-dimension"""
+        self._yFac = yFac
+        for b in self.boxes:
+            b.setYFac(yFac)
 
     def paint(self, scene):
         """Paint boxes onto scene"""
@@ -49,7 +56,7 @@ class Profile:
         """Paint legend explaining the width of the individual 
         layers/boxes below the profile"""
         yBottom = self.y - self.height()
-        yPos = (yBottom - self.margin) * -10 # cm to mm
+        yPos = (yBottom - self.margin) * self._yFac * -10 # cm to mm
         for b in self.boxes:
             xPos = (self.x + b.width) * 10
             scene.addLine(xPos, yPos, xPos, yPos + 20)
@@ -80,7 +87,7 @@ class Profile:
         n = scene.addText("{}".format(self.name)) # name might be an int
         n.adjustSize()
         n.setX(self.x * 10) # cm to mm
-        n.setY(-self.y * 10 - n.boundingRect().height())
+        n.setY(-self.y * self._yFac * 10 - n.boundingRect().height())
 
     def _paintLeftDescription(self, scene):
         """Paint left column of the description"""
@@ -91,7 +98,7 @@ class Profile:
         top = scene.addText("{:.2f} mNHN".format(float(yTop) / 100))
         top.adjustSize()
         xpos = (self.x * 10) - top.textWidth() - (self.margin * 10) # cm to mm
-        ypos = -yTop * 10 # cm to mm
+        ypos = -yTop * self._yFac * 10 # cm to mm
         top.setX(xpos)
         top.setY(ypos - 2) 
         scene.addLine(xpos, ypos, 10 * (self.x - self.margin), ypos)
@@ -100,10 +107,10 @@ class Profile:
         bottom = scene.addText("{:.2f} mNHN".format(float(yBottom) / 100))
         bottom.adjustSize()
         xpos = (self.x * 10) - bottom.textWidth() - (self.margin * 10) # cm to mm
-        ypos = -yBottom * 10 - (bottom.boundingRect().height() - 2) # cm to mm
+        ypos = -yBottom * self._yFac * 10 - (bottom.boundingRect().height() - 2) # cm to mm
         bottom.setX(xpos)
         bottom.setY(ypos)
-        ypos = -yBottom * 10
+        ypos = -yBottom * self._yFac * 10
         scene.addLine(xpos, ypos, 10 * (self.x - self.margin), ypos)
 
     def _paintRightDescription(self, scene):

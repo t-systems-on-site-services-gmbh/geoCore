@@ -32,7 +32,13 @@ class ProfilePainter:
         The parameter otbps stands for "objects to be painted"
         (i.e. profiles and connectors). Parameter description
         denotes if a description shall be added."""
+        yFac = self._determineYFac(otbps)
         for i in otbps:
+            i.setYFac(yFac)
             i.paint(self.scene)
             if description:
                 i.paintDescription(self.scene)
+
+    def _determineYFac(self, otbps):
+        """Determine a smart scaling factor for the y-dimension"""
+        return 1.0

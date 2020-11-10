@@ -32,6 +32,7 @@ class ProfileBox:
         self.layer = layer
         self.group = self.layer
         self.y = 0.0
+        self._yFac = 1.0
         self.width = 0.0
         self.height = 0.0
         self.depth = 0.0
@@ -41,6 +42,10 @@ class ProfileBox:
         self.texture = ''
         self.isFirst = layer == 1
         self.isLast = False
+
+    def setYFac(self, yFac):
+        """Set scaling factor for y-dimension"""
+        self._yFac = yFac
 
     def paint(self, scene, xpos):
         """Paint box onto scene"""
@@ -88,9 +93,9 @@ class ProfileBox:
         """Scales the position (x, y) as well as width and height"""
         # convert dimensions from cm to mm
         x = xpos * 10
-        y = self.y * -10 # direction of y-axis is top down, point (0,0) is in the upper left
+        y = self.y * self._yFac * -10 # direction of y-axis is top down, point (0,0) is in the upper left
         w = self.width * 10
-        h = self.height * 10
+        h = self.height * self._yFac * 10
         return x, y, w, h
 
     def _getPenAndBrush(self):
