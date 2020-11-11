@@ -60,7 +60,7 @@ class Profile:
         """Paint legend explaining the width of the individual 
         layers/boxes below the profile"""
         yBottom = self.y - self.height()
-        yPos = (yBottom - self.margin) * self._yFac * -10 # cm to mm
+        yPos = (yBottom * self._yFac - self.margin) * -10 # cm to mm
         for b in self.boxes:
             xPos = (self.x + b.width) * 10
             scene.addLine(xPos, yPos, xPos, yPos + 20)
