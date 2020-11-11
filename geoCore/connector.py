@@ -20,6 +20,7 @@
 """    
 
 from qgis.core import Qgis, QgsMessageLog
+from math import fabs
 
 class Connector:
     """Connector represents the line connecting two petrographic
@@ -37,6 +38,10 @@ class Connector:
     def setYFac(self, yFac):
         """Set scaling factor for y-dimension"""
         self._yFac = yFac
+
+    def partsHeights(self):
+        """Return the height of each connector"""
+        return [fabs(self.y1 - self.y2)]
 
     def paint(self, scene):
         """Paint connector onto scene"""

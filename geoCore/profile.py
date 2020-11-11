@@ -39,6 +39,10 @@ class Profile:
         """Return the height of the profile"""
         return reduce(lambda x, y: x + y, [b.height for b in self.boxes])
 
+    def partsHeights(self):
+        """Return the height of each box"""
+        return [b.height for b in self.boxes]
+
     def setYFac(self, yFac):
         """Set scaling factor for y-dimension"""
         self._yFac = yFac

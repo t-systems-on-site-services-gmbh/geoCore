@@ -26,19 +26,44 @@ class ProfilePainter:
         """Initialize ProfilePainter.
         All constructed items are added to the scene."""
         self.scene = scene
+        self._viewHeight = 500.0
 
     def paint(self, otbps, description):
         """Construct items.
         The parameter otbps stands for "objects to be painted"
         (i.e. profiles and connectors). Parameter description
         denotes if a description shall be added."""
-        yFac = self._determineYFac(otbps)
+        self._setYFac(otbps)
         for i in otbps:
-            i.setYFac(yFac)
             i.paint(self.scene)
             if description:
                 i.paintDescription(self.scene)
 
-    def _determineYFac(self, otbps):
+    def _setYFac(self, otbps):
+        """Set a smart scaling factor for the y-dimension"""
+        facs = [ self._determineYFac(o) for o in otbps ]
+        facsShrink = [ s for s in facs if s < 1.0 ]
+        facsStretch = [ s for s in facs if s >= 1.0 ]
+
+        yFac = 1.0
+        
+        if (len(facsShrink) > 0) and (len(facsStretch) > 0):
+            yFac = 1.0
+        elif len(facsShrink) > 0:
+            yFac = max(facsShrink)
+        else:
+            yFac = min(facsStretch)
+        
+        for o in otbps:
+            o.setYFac(yFac)
+
+    def _determineYFac(self, otbp):
         """Determine a smart scaling factor for the y-dimension"""
-        return 1.0
+        vh = self._viewHeight / 28.35 # pixel to cm
+        facsShrink = [ vh / h for h in otbp.partsHeights() if h > vh ]
+        facsStretch = [ vh / h for h in otbp.partsHeights() if h <= vh ]
+
+        if len(facsShrink) > 0:
+            return max(facsShrink)
+        else:
+            return min(facsStretch)
