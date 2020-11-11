@@ -252,7 +252,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         features = self._getSortedDrillingPositions(sortCrit)
         builder = ProfileBuilder(self.iface.activeLayer().name(), self.showMessage)
         pac = builder.getProfilesAndConnectors(features)
-        painter = ProfilePainter(self.scene)
+        painter = ProfilePainter(self.scene, self.view.height())
         painter.paint(pac, len(pac) == 1)
         self.view.resetTransform()
         self.view.setSceneRect(self.scene.itemsBoundingRect())

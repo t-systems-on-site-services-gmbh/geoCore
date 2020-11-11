@@ -22,11 +22,11 @@
 class ProfilePainter:
     """This class is used to construct the graphics items"""
 
-    def __init__(self, scene):
+    def __init__(self, scene, viewHeight):
         """Initialize ProfilePainter.
-        All constructed items are added to the scene."""
+        All constructed items are added to the given scene."""
         self.scene = scene
-        self._viewHeight = 500.0
+        self._viewHeight = viewHeight
 
     def paint(self, otbps, description):
         """Construct items.
@@ -59,7 +59,8 @@ class ProfilePainter:
 
     def _determineYFac(self, otbp):
         """Determine a smart scaling factor for the y-dimension"""
-        vh = self._viewHeight / 28.35 # pixel to cm
+        margin = 10
+        vh = (self._viewHeight - margin) / 28.35 # pixel to cm
         facsShrink = [ vh / h for h in otbp.partsHeights() if h > vh ]
         facsStretch = [ vh / h for h in otbp.partsHeights() if h <= vh ]
 
