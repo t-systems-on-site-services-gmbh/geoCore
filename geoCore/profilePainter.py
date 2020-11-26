@@ -51,7 +51,7 @@ class ProfilePainter:
             yFac = 1.0
         elif len(facsShrink) > 0:
             yFac = max(facsShrink)
-        else:
+        elif len(facsStretch) > 0:
             yFac = min(facsStretch)
         
         for o in otbps:
@@ -61,10 +61,12 @@ class ProfilePainter:
         """Determine a smart scaling factor for the y-dimension"""
         margin = 10
         vh = (self._viewHeight - margin) / 28.35 # pixel to cm
-        facsShrink = [ vh / h for h in otbp.partsHeights() if h > vh ]
-        facsStretch = [ vh / h for h in otbp.partsHeights() if h <= vh ]
+        facsShrink = [ vh / h for h in otbp.partsHeights() if h > vh and h != 0 ]
+        facsStretch = [ vh / h for h in otbp.partsHeights() if h <= vh and h != 0 ]
 
         if len(facsShrink) > 0:
             return max(facsShrink)
-        else:
+        elif len(facsStretch) > 0:
             return min(facsStretch)
+        else:
+            return 1.0
