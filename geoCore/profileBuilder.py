@@ -62,6 +62,8 @@ class ProfileBuilder:
 
     def _splitPetrographie(self, petro):
         """Split the given Petrograhie into Großgruppe and Kleingruppe"""
+        if not isinstance(petro, str):
+            return (None, [])
         m = self.petroPattern.match(petro)
         gg = m.group(1) # Großgruppe
         kg = []
