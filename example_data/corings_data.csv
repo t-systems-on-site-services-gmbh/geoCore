@@ -1,9 +1,9 @@
-ID;schichtnr;petrographie;facies;beschreibung;farbe;tiefe von;tiefe bis;gruppierung;;
-1;1;S(u4, h, lam, as);st;;gr;0;10;1;;
-1;2;T(u1, wood);it;;br;10;30;2;;
-1;3;U(fs);;;ge;30;35;3;;
-1;4;G;;;gru;35;36.5;4;;
-2;1;S(u2);;;gr;0;20;1;;
-2;2;T;;;br;20;43;2;;
-2;3;U(t1);;;ge;43;58;3;;
-2;4;H;;;gru;58;90;4;;
+ID;schichtnr;petrographie;facies;beschreibung;farbe;tiefe von;tiefe bis;gruppierung
+Core 1;1;S(u4, h, lam, as);st;Topsoil;gr;0;10;1
+Core 1;2;T(u1, wood);it;;br;10;30;2
+Core 1;3;U(fs(u1));;;ge;30;35;3
+Core 1;4;G;;;gru;35;36.5;4
+Core 2;1;S(u2);;;gr;0;20;1
+Core 2;2;T;;;br;20;43;2
+Core 2;3;U(t1);;;ge;43;58;3
+Core 2;4;H;;;gru;58;90;4

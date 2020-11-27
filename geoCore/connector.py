@@ -20,6 +20,7 @@
 """    
 
 from qgis.core import Qgis, QgsMessageLog
+from math import fabs
 
 class Connector:
     """Connector represents the line connecting two petrographic
@@ -32,12 +33,21 @@ class Connector:
         self.y1 = 0.0
         self.x2 = 0.0
         self.y2 = 0.0 # in cm
+        self._yFac = 1.0
+
+    def setYFac(self, yFac):
+        """Set scaling factor for y-dimension"""
+        self._yFac = yFac
+
+    def partsHeights(self):
+        """Return the height of each connector"""
+        return [fabs(self.y1 - self.y2)]
 
     def paint(self, scene):
         """Paint connector onto scene"""
         # convert from cm to mm
         # direction of y-axis it top down, i.e. point (0,0) is in the upper left
-        scene.addLine(self.x1 * 10, self.y1 * -10, self.x2 * 10, self.y2 * -10)
+        scene.addLine(self.x1 * 10, self.y1 * self._yFac * -10, self.x2 * 10, self.y2 * self._yFac * -10)
 
     def paintDescription(self, scene):
         """Paint the connector's description"""
