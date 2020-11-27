@@ -164,7 +164,7 @@ class ProfileBuilder:
                 return dictionary[key]
         except KeyError:
             if showError:
-                self.showInformationMessage("Info", "Key {} not found in config.".format(key))
+                self.showMessage("Info", "Key {} not found in config.".format(key), Qgis.Info)
         return errorValue
 
     def _connectProfiles(self, profiles, features):
@@ -245,7 +245,3 @@ class ProfileBuilder:
     def showErrorMessage(self, title, message):
         """Display an error message"""
         self.showMessage(title, message, Qgis.Critical)
-
-    def showInformationMessage(self, title, message):
-        """Display an error message"""
-        self.showMessage(title, message, Qgis.Info)
