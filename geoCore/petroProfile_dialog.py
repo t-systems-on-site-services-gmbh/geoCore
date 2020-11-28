@@ -125,6 +125,11 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         aboutAction.setEnabled(True)
         actions.append(aboutAction)
 
+        manualAction = QAction("Manual...", self)
+        manualAction.triggered.connect(self._openManual)
+        manualAction.setEnabled(True)
+        actions.append(manualAction)
+
         return actions
 
     def contextMenuEvent(self, e):
@@ -270,7 +275,14 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
             under certain conditions; see 
             <a href="https://www.gnu.org/licenses/gpl-3.0-standalone.html">
             https://www.gnu.org/licenses</a> for details.
+            <br>
+            <a href="https://github.com/t-systems-on-site-services-gmbh/geoCore/blob/master/geoCore/help/usage.md">Manual</a>
             """)
+    def _openManual(self):
+        script_dir = os.path.dirname(__file__)
+        rel_path = "help/usage.html"
+        abs_file_path = os.path.join(script_dir, rel_path)
+        os.system("start " + abs_file_path)
 
     def showMessage(self, title, message, level):
         """Display a message in the main window's messageBar"""
