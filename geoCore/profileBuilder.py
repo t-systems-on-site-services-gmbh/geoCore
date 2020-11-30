@@ -81,6 +81,7 @@ class ProfileBuilder:
         if len(features) > 0:
             x = features[0].attribute(self.config.settings["xCoord"])
             y = features[0].attribute(self.config.settings["yCoord"])
+            xp_predecessor = 0
             for f in features:
                 # The x-position (xp) of the drilling profile is the distance
                 # to the previous coordinate. We start with xp = 0.
@@ -89,7 +90,8 @@ class ProfileBuilder:
                 yp = f.attribute(self.config.settings["zCoord"]) * 100 # convert to cm
                 x = f.attribute(self.config.settings["xCoord"])
                 y = f.attribute(self.config.settings["yCoord"])
-                profiles.append(self._getProfile(f, xp, yp))
+                xp_predecessor = xp_predecessor + xp
+                profiles.append(self._getProfile(f, xp_predecessor, yp))
 
         actualProfiles = []
         actualFeatures = []
