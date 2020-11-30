@@ -120,15 +120,15 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         sepAbout.setSeparator(True)
         actions.append(sepAbout)
 
-        aboutAction = QAction("About...", self)
-        aboutAction.triggered.connect(self._aboutPlugin)
-        aboutAction.setEnabled(True)
-        actions.append(aboutAction)
-
         manualAction = QAction("Manual...", self)
         manualAction.triggered.connect(self._openManual)
         manualAction.setEnabled(True)
         actions.append(manualAction)
+
+        aboutAction = QAction("About...", self)
+        aboutAction.triggered.connect(self._aboutPlugin)
+        aboutAction.setEnabled(True)
+        actions.append(aboutAction)        
 
         return actions
 
@@ -268,16 +268,20 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def _aboutPlugin(self):
         QMessageBox.about(self, "About", 
-            """<b>geoCore</b><br>
+            """<h1>geoCore</h1>
+            <p>
             Copyright (C) 2019,2020  Gerrit Bette, T-Systems on site services GmbH<br>
             This program comes with ABSOLUTELY NO WARRANTY. 
             This is free software, and you are welcome to redistribute it
             under certain conditions; see 
             <a href="https://www.gnu.org/licenses/gpl-3.0-standalone.html">
             https://www.gnu.org/licenses</a> for details.
-            <br>
+            </p>
+            <p>
             <a href="https://github.com/t-systems-on-site-services-gmbh/geoCore/blob/master/geoCore/help/usage.md">Manual</a>
+            </p>
             """)
+            
     def _openManual(self):
         script_dir = os.path.dirname(__file__)
         rel_path = "help/usage.html"
