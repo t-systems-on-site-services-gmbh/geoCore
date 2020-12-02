@@ -225,6 +225,24 @@ class ProfileBuilder:
             lgLeft = pLeft.boxes[l].group
             yLeft = yLeft - pLeft.boxes[l].height
 
+            if len(pLeft.boxes) != len(pRight.boxes) and r == len(pRight.boxes):
+                # last profile box on the right but not on the left
+                c = Connector()
+                c.x2 = pRight.x
+                c.y2 = pRight.y - pRight.height()
+
+                found = False
+                ll = len(pLeft.boxes) - 1
+                while ll >= l and not found:
+                    if pLeft.boxes[ll].group == pRight.boxes[r - 1].group:
+                        c.x1 = pLeft.x + pLeft.boxes[ll].width
+                        c.y1 = pLeft.y - sum([b.height for b in pLeft.boxes[:ll+1]])
+                        found = True
+                    ll = ll - 1
+
+                if found:
+                    connectors.append(c)
+
             if l == len(pLeft.boxes) - 1:
                 # last profile box on the left
                 c = Connector()
