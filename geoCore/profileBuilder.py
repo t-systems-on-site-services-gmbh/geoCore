@@ -237,7 +237,7 @@ class ProfileBuilder:
                 while (rr >= r - 1) and not found:
                     if pLeft.boxes[l].group == pRight.boxes[rr].group:
                         c.x2 = pRight.x
-                        c.y2 = pRight.y - pRight.height()
+                        c.y2 = pRight.y - sum([b.height for b in pRight.boxes[:rr+1]])
                         found = True
                     rr = rr - 1
                 
