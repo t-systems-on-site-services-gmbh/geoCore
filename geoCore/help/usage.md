@@ -1,11 +1,14 @@
 # geoCore - QGIS plugin to construct a graphical representation of petrographic drilling profiles.
 
-*Author Code: Gerrit Bette (1) Author Infotext: Moritz Mennenga (2); Gerrit Bette (1)*
+*Authors Gerrit Bette (1); Moritz Mennenga (2)*
 
 1. T-Systems on site services GmbH
 2. Niedersächsisches Institut für historische Küstenforschung, Viktoriastr. 26/28, 26386 Wilhelmshaven
 
 The QGIS Plugin geoCore is under development by [T-Systems on site services GmbH](https://www.t-systems-onsite.de/) based on the idea of the [Lower Saxony Institute for Historical Coastal Research Wilhelmshaven (NIhK)](www.nihk.de).
+
+## Citation
+G. Bette & M. Mennenga 2020: t-systems-on-site-services-gmbh/geoCore: v0.6.1 (Version v0.6.1). Zenodo. http://doi.org/10.5281/zenodo.4304230
 
 ## Aim
 
@@ -19,6 +22,8 @@ An example data set is available in the [github-Repository](https://github.com/t
 In the following, the necessary basics and specifications are presented to ensure that the plugin can be used.
 
 ### Data
+
+**[Download example data](https://github.com/t-systems-on-site-services-gmbh/geoCore/tree/master/example_data)**
 
 As a basis for displaying coring data, the plugin requires a specific format. Two sets are required. The former is a shapefile whose attribute table must be organized as follows:
 
@@ -134,6 +139,6 @@ colors:
 
 ## Usage
 
-*(The display and export are still in development)*
+*The plugin is still under development - see [issues](https://github.com/t-systems-on-site-services-gmbh/geoCore/issues)*
 
-If all files are available as described and the definitions are entered as required, the plug-in can be used. First, the shape file and the corresponding text file with the layer data must be imported. It is now possible to display a single or multiple profiles. To do this, select all the desired boreholes with the QGIS Selection Tool and click on the geoCore icon (or choose the menu entry Extensions -> Vector -> geoCore -> Show drilling profile). A dialog opens showing the drilling profile(s). geoCore’s user interface is kept very simple and should be self-explanatory. A right click on the dialog opens the context menu which allows to export the profile as an image (supported formats are SVG, PNG, JPG). Furthermore you can rearrange the drilling profiles if you are showing multiple at once. If the *group* parameter contains an entry for several profiles, the layers are automatically connected. Using the mouse wheel you can zoom in and out. The middle mouse button allows for panning. This is just like navigating the QGIS map.
+If all files are available as described and the definitions are entered as required, the plug-in can be used. First, the shape file and the corresponding text file with the layer data must be imported. It is now possible to display a single or multiple profiles. To do this, select all the desired boreholes with the QGIS Selection Tool and click on the geoCore icon (or choose the menu entry Plugins -> geoCore -> Show drilling profile). A dialog opens showing the drilling profile(s). geoCore’s user interface is kept very simple and should be self-explanatory. A right click on the dialog opens the context menu which allows to export the profile as SVG. Furthermore you can rearrange the drilling profiles if you are showing multiple at once. If the *group* parameter contains an entry for several profiles, the layers are automatically connected. Using the mouse wheel you can zoom in and out. The middle mouse button allows for panning. This is just like navigating the QGIS map.
