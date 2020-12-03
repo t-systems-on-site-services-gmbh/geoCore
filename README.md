@@ -2,7 +2,7 @@
 
 A QGIS Plugin
 
-The plugin constructs a graphical representation of drillings.
+The plugin creates graphical representations of geoscientific drillings.
 
 geoCore was developed in cooperation with the Lower Saxony Institute for Historical Coastal Research (https://nihk.de/). The NIhK provides the domain specific knowledge and is key driver for the plugin's feature set.
 
