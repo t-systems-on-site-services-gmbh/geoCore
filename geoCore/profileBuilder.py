@@ -81,18 +81,20 @@ class ProfileBuilder:
         if len(features) > 0:
             x = features[0].attribute(self.config.settings["xCoord"])
             y = features[0].attribute(self.config.settings["yCoord"])
-            xp_predecessor = 0
+            xp = 0
             for f in features:
                 # The x-position (xp) of the drilling profile is the distance
                 # to the previous coordinate. We start with xp = 0.
                 # The y-position of the profile is the elevation (z-coordinate).
-                xp = sqrt((f.attribute(self.config.settings["xCoord"]) - x)**2 + (f.attribute(self.config.settings["yCoord"]) - y)**2)
+                distance = sqrt((f.attribute(self.config.settings["xCoord"]) - x)**2 + (f.attribute(self.config.settings["yCoord"]) - y)**2)
+                xp = xp + distance
                 yp = f.attribute(self.config.settings["zCoord"]) * 100 # convert to cm
+
+                profiles.append(self._getProfile(f, xp, yp))
+
                 x = f.attribute(self.config.settings["xCoord"])
                 y = f.attribute(self.config.settings["yCoord"])
-                xp_predecessor = xp_predecessor + xp
-                profiles.append(self._getProfile(f, xp_predecessor, yp))
-
+                
         actualProfiles = []
         actualFeatures = []
         for p, f in zip(profiles, features):
@@ -223,6 +225,24 @@ class ProfileBuilder:
             lgLeft = pLeft.boxes[l].group
             yLeft = yLeft - pLeft.boxes[l].height
 
+            if len(pLeft.boxes) != len(pRight.boxes) and r == len(pRight.boxes):
+                # last profile box on the right but not on the left
+                c = Connector()
+                c.x2 = pRight.x
+                c.y2 = pRight.y - pRight.height()
+
+                found = False
+                ll = len(pLeft.boxes) - 1
+                while ll >= l and not found:
+                    if pLeft.boxes[ll].group == pRight.boxes[r - 1].group:
+                        c.x1 = pLeft.x + pLeft.boxes[ll].width
+                        c.y1 = pLeft.y - sum([b.height for b in pLeft.boxes[:ll+1]])
+                        found = True
+                    ll = ll - 1
+
+                if found:
+                    connectors.append(c)
+
             if l == len(pLeft.boxes) - 1:
                 # last profile box on the left
                 c = Connector()
@@ -235,7 +255,7 @@ class ProfileBuilder:
                 while (rr >= r - 1) and not found:
                     if pLeft.boxes[l].group == pRight.boxes[rr].group:
                         c.x2 = pRight.x
-                        c.y2 = pRight.y - pRight.height()
+                        c.y2 = pRight.y - sum([b.height for b in pRight.boxes[:rr+1]])
                         found = True
                     rr = rr - 1
                 
