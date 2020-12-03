@@ -21,3 +21,7 @@ In order to be able to interpret drill data correctly and in a comparable manner
 GNU General Public License v3.0 or later
 
 See [LICENSE](LICENSE)
+
+## Badges
+
+[![DOI](https://zenodo.org/badge/286937017.svg)](https://zenodo.org/badge/latestdoi/286937017)
