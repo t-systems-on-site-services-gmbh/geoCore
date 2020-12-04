@@ -1,4 +1,4 @@
-# geoCore - QGIS plugin to construct a graphical representation of petrographic drilling profiles.
+# geoCore - QGIS plugin for creating graphical representations of geoscientific drillings.
 
 *Authors Gerrit Bette (1); Moritz Mennenga (2)*
 

@@ -1,5 +1,5 @@
 ---
-title: 'geoCore - QGIS plugin to render a graphical representation of ground drilling'
+title: 'geoCore - QGIS plugin to create graphical representations of geoscientific drillings'
 tags:
   - Python
   - QGIS
