@@ -8,7 +8,7 @@
 The QGIS Plugin geoCore is under development by [T-Systems on site services GmbH](https://www.t-systems-onsite.de/) based on the idea of the [Lower Saxony Institute for Historical Coastal Research Wilhelmshaven (NIhK)](www.nihk.de).
 
 ## Citation
-G. Bette & M. Mennenga 2020: t-systems-on-site-services-gmbh/geoCore: v0.6.1 (Version v0.6.1). Zenodo. http://doi.org/10.5281/zenodo.4304230
+G. Bette & M. Mennenga 2020:  t-systems-on-site-services-gmbh/geoCore v0.7 (Version v0.7). Zenodo. http://doi.org/10.5281/zenodo.4347497
 
 ## Aim
 
@@ -25,7 +25,7 @@ In the following, the necessary basics and specifications are presented to ensur
 
 **[Download example data](https://github.com/t-systems-on-site-services-gmbh/geoCore/tree/master/example_data)**
 
-As a basis for displaying coring data, the plugin requires a specific format. Two sets are required. The former is a shapefile whose attribute table must be organized as follows:
+As a basis for displaying coring data, the plugin requires a specific format. Two sets are required. The former is a vector-layer whose attribute table must be organized as follows:
 
 ID |	xcoord |	ycoord |	zcoord |	name | 
 | --- |-------------|-------------|-------------|-------------|
