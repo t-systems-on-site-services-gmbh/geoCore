@@ -10,8 +10,7 @@ version=0.7
 author=T-Systems on site services GmbH
 email=gerrit.bette@t-systems.com
 
-about=geoCore creates graphical representations of geoscientific drillings. The plugin depends on PyYAML (https://pypi.org/project/PyYAML/) and naturally on QGIS and thus PyQt. geoCore was developed in cooperation with the Lower Saxony Institute for Historical Coastal Research (NIhK). The NIhK provides the domain specific knowledge and is key driver for the plugin's feature set. Citation: G. Bette & M. Mennenga 2020: t-systems-on-site-services-gmbh/geoCore: v0.6.1 (Version v0.6.1). Zenodo. http://doi.org/10.5281/zenodo.4304230
-
+about=geoCore creates graphical representations of geoscientific drillings. The plugin depends on PyYAML (https://pypi.org/project/PyYAML/) and naturally on QGIS and thus PyQt. geoCore was developed in cooperation with the Lower Saxony Institute for Historical Coastal Research (NIhK). The NIhK provides the domain specific knowledge and is key driver for the plugin's feature set. For the citation options see the manual.
 tracker=https://github.com/t-systems-on-site-services-gmbh/geoCore/issues/1
 repository=https://github.com/t-systems-on-site-services-gmbh/geoCore/
 
