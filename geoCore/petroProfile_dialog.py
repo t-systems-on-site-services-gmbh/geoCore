@@ -195,7 +195,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         try:
             self.scene.clearSelection()
             margin = 5
-            sourceRect = self.scene.sceneRect()            
+            sourceRect = self.scene.itemsBoundingRect()
             sourceRect.adjust(-margin, -margin, margin, margin)
 
             targetRect = QRectF(0, 0, sourceRect.width(), sourceRect.height())
