@@ -1,7 +1,7 @@
 """ This module contains the class profile Painter
 
     geoCore - a QGIS plugin for drawing drilling profiles
-    Copyright (C) 2019, 2020  Gerrit Bette, T-Systems on site services GmbH
+    Copyright (C) 2019 - 2021  Gerrit Bette, T-Systems on site services GmbH
 
     This file is part of geoCore.
 
@@ -27,16 +27,38 @@ class ProfilePainter:
         All constructed items are added to the given scene."""
         self.scene = scene
         self._viewHeight = viewHeight
+        self._xFac = 1.0
+        self._yFac = 1.0
+        self._doAutoScale = True
 
-    def paint(self, otbps, description):
+    def applyScale(self, xFac, yFac):
+        """Apply scaling factors in x- and y-dimension
+        If None no scaling is applied for the x-position (i.e. xFac = 1.0)
+        but auto-scaling for the height (y-dimension) is turned on."""
+        if xFac == None:
+            self._xFac = 1.0
+        else:
+            self._xFac = xFac
+        
+        if yFac == None:
+            self._yFac = 1.0
+            self._doAutoScale = True
+        else:
+            self._setYFac = yFac
+            self._doAutoScale = False
+
+    def paint(self, otbps, addMeasure, addDescription):
         """Construct items.
         The parameter otbps stands for "objects to be painted"
         (i.e. profiles and connectors). Parameter description
         denotes if a description shall be added."""
-        self._setYFac(otbps)
+        if self._doAutoScale:
+            self._setYFac(otbps)
         for i in otbps:
+            i.setXFac(self._xFac)
+            i.setYFac(self._yFac)
             i.paint(self.scene)
-            if description:
+            if addDescription:
                 i.paintDescription(self.scene)
 
     def _setYFac(self, otbps):
@@ -44,18 +66,15 @@ class ProfilePainter:
         facs = [ self._determineYFac(o) for o in otbps ]
         facsShrink = [ s for s in facs if s < 1.0 ]
         facsStretch = [ s for s in facs if s >= 1.0 ]
+        
+        self._yFac = 1.0
 
-        yFac = 1.0
-        
         if (len(facsShrink) > 0) and (len(facsStretch) > 0):
-            yFac = 1.0
+            self._yFac = 1.0
         elif len(facsShrink) > 0:
-            yFac = max(facsShrink)
+            self._yFac = max(facsShrink)
         elif len(facsStretch) > 0:
-            yFac = min(facsStretch)
-        
-        for o in otbps:
-            o.setYFac(yFac)
+            self._yFac = min(facsStretch)
 
     def _determineYFac(self, otbp):
         """Determine a smart scaling factor for the y-dimension"""
