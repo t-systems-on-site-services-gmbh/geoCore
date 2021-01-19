@@ -1,7 +1,7 @@
 """ Module containing the class Connector
 
     geoCore - a QGIS plugin for drawing drilling profiles
-    Copyright (C) 2019, 2020  Gerrit Bette, T-Systems on site services GmbH
+    Copyright (C) 2019 - 2021  Gerrit Bette, T-Systems on site services GmbH
 
     This file is part of geoCore.
 
@@ -33,7 +33,13 @@ class Connector:
         self.y1 = 0.0
         self.x2 = 0.0
         self.y2 = 0.0 # in cm
+        self.xOffset = 0.0
+        self._xFac = 1.0
         self._yFac = 1.0
+
+    def setXFac(self, xFac):
+        """Set scaling factor for x-position"""
+        self._xFac = xFac
 
     def setYFac(self, yFac):
         """Set scaling factor for y-dimension"""
@@ -47,7 +53,10 @@ class Connector:
         """Paint connector onto scene"""
         # convert from cm to mm
         # direction of y-axis it top down, i.e. point (0,0) is in the upper left
-        scene.addLine(self.x1 * 10, self.y1 * self._yFac * -10, self.x2 * 10, self.y2 * self._yFac * -10)
+        scene.addLine((self.x1 * self._xFac + self.xOffset) * 10, 
+            self.y1 * self._yFac * -10, 
+            self.x2 * self._xFac * 10, 
+            self.y2 * self._yFac * -10)
 
     def paintDescription(self, scene):
         """Paint the connector's description"""

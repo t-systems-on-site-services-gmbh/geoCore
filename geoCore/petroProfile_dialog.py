@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     geoCore - a QGIS plugin for drawing drilling profiles
-    Copyright (C) 2019, 2020  Gerrit Bette, T-Systems on site services GmbH
+    Copyright (C) 2019 - 2021  Gerrit Bette, T-Systems on site services GmbH
 
     This file is part of geoCore.
 
@@ -270,7 +270,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         QMessageBox.about(self, "About", 
             """<h1>geoCore</h1>
             <p>
-            Copyright (C) 2019,2020  Gerrit Bette, T-Systems on site services GmbH<br>
+            Copyright (C) 2019-2021  Gerrit Bette, T-Systems on site services GmbH<br>
             This program comes with ABSOLUTELY NO WARRANTY. 
             This is free software, and you are welcome to redistribute it
             under certain conditions; see 

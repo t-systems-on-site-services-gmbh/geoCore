@@ -1,7 +1,7 @@
 """ Module to construct profiles
 
     geoCore - a QGIS plugin for drawing drilling profiles
-    Copyright (C) 2019, 2020  Gerrit Bette, T-Systems on site services GmbH
+    Copyright (C) 2019 - 2021  Gerrit Bette, T-Systems on site services GmbH
 
     This file is part of geoCore.
 
@@ -207,8 +207,9 @@ class ProfileBuilder:
             if lgLeft != pLeft.boxes[l].group:
                 # new connector
                 c = Connector()
-                c.x1 = pLeft.x + pLeft.boxes[l].width
+                c.x1 = pLeft.x
                 c.y1 = yLeft
+                c.xOffset = pLeft.boxes[l].width
 
                 # find the corresponding group on the right side
                 found = False
@@ -235,8 +236,9 @@ class ProfileBuilder:
                 ll = len(pLeft.boxes) - 1
                 while ll >= l and not found:
                     if pLeft.boxes[ll].group == pRight.boxes[r - 1].group:
-                        c.x1 = pLeft.x + pLeft.boxes[ll].width
+                        c.x1 = pLeft.x
                         c.y1 = pLeft.y - sum([b.height for b in pLeft.boxes[:ll+1]])
+                        c.xOffset = pLeft.boxes[ll].width
                         found = True
                     ll = ll - 1
 
@@ -246,8 +248,9 @@ class ProfileBuilder:
             if l == len(pLeft.boxes) - 1:
                 # last profile box on the left
                 c = Connector()
-                c.x1 = pLeft.x + pLeft.boxes[l].width
+                c.x1 = pLeft.x
                 c.y1 = pLeft.y - pLeft.height()
+                c.xOffset = pLeft.boxes[l].width
 
                 # connect to last corresponding group on the right
                 found = False
