@@ -47,10 +47,10 @@ class ProfilePainter:
             self._setYFac = yFac
             self._doAutoScale = False
 
-    def paint(self, otbps, addMeasure, addDescription):
+    def paint(self, otbps, addDescription):
         """Construct items.
         The parameter otbps stands for "objects to be painted"
-        (i.e. profiles and connectors). Parameter description
+        (i.e. profiles and connectors). Parameter addDescription
         denotes if a description shall be added."""
         if self._doAutoScale:
             self._setYFac(otbps)

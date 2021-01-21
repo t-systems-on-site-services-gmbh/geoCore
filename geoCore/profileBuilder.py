@@ -21,6 +21,7 @@
 
 import re
 from math import sqrt
+from sys import maxsize
 from qgis.core import Qgis, QgsExpression, QgsFeatureRequest, QgsProject, QgsMessageLog
 from qgis.PyQt.QtCore import QVariant
 
@@ -28,6 +29,8 @@ from .geoCoreConfig import Config
 from .profile import Profile
 from .profileBox import ProfileBox
 from .connector import Connector
+from .orientation import Orientation
+from .gauge import Gauge
 
 class ProfileBuilder:
     """This class constructs the drilling profiles"""
@@ -105,8 +108,9 @@ class ProfileBuilder:
             self.showMessage("Info", "Select at least one feature or activate the correct layer.", Qgis.Info)
 
         connectors = self._connectProfiles(actualProfiles, actualFeatures)
+        gauges = self._getGauges(actualProfiles)
 
-        return actualProfiles + connectors
+        return actualProfiles + connectors + gauges
 
     def _getProfile(self, feature, x, y):
         """Construct a profile from feature"""
@@ -268,6 +272,32 @@ class ProfileBuilder:
             l = l + 1
 
         return connectors
+
+    def _getGauges(self, profiles):
+        """Gets the gauges for the left and bottom side"""
+        if (len(profiles) <= 1):
+            return
+
+        minx, maxx, miny, maxy = self._determineMinMax(profiles)
+        
+        gauges = []
+        gauges.append(Gauge(minx, miny, minx, maxx, Orientation.HORIZONTAL))
+        gauges.append(Gauge(minx, miny, miny, maxy, Orientation.VERTICAL))
+
+        return gauges
+
+    def _determineMinMax(self, profiles):
+        """Determine the min and max values in x- and y-dimension"""
+        minx = maxsize
+        maxx = 0
+        miny = maxsize
+        maxy = 0
+        for p in profiles:
+            minx = min(minx, p.x)
+            maxx = max(maxx, p.x)
+            miny = min(miny, p.y, p.y - p.height())
+            maxy = max(maxy, p.y, p.y - p.height())
+        return minx, maxx, miny, maxy
 
     def showErrorMessage(self, title, message):
         """Display an error message"""
