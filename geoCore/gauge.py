@@ -45,7 +45,10 @@ class Gauge(Otbp):
         w = self._max - self._min
         self._stepWidth = w / 5
         if self._stepWidth % 10 != 0:
-            self._stepWidth = (trunc(self._stepWidth / 10) + 1) * 10
+            if self._stepWidth % 10 < 5:
+                self._stepWidth = trunc(self._stepWidth / 10) * 10
+            else:
+                self._stepWidth = (trunc(self._stepWidth / 10) + 1) * 10
             self._max = self._min + 5 * self._stepWidth
 
     def partsHeights(self):
@@ -58,9 +61,9 @@ class Gauge(Otbp):
     def paint(self, scene):
         """Paint the guage onto the scene"""
         if self._orientation == Orientation.VERTICAL:
-            self._paintVertical(scene)            
+            self._paintVertical(scene)
         else:
-            self._paintHorizontal(scene)            
+            self._paintHorizontal(scene)
 
     def _paintHorizontal(self, scene):
         """Paint the horizontal gauge"""
@@ -110,7 +113,7 @@ class Gauge(Otbp):
         scene.addRect(x, y + 1 * sw, self._width * 10, sw, pen, wBrush)
         scene.addRect(x, y + 2 * sw, self._width * 10, sw, pen, bBrush)
         scene.addRect(x, y + 3 * sw, self._width * 10, sw, pen, wBrush)
-        scene.addRect(x, y + 4 * sw, self._width * 10, sw, pen, bBrush)        
+        scene.addRect(x, y + 4 * sw, self._width * 10, sw, pen, bBrush)
 
     def _paintVerticalDescription(self, scene, x, y, h):
         """Paint the description of the vertical gauge"""
