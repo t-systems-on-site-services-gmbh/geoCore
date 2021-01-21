@@ -22,7 +22,7 @@
 from math import fabs, trunc
 from .orientation import Orientation
 from .otbp import Otbp
-from qgis.core import Qgis, QgsMessageLog
+from qgis.PyQt.QtGui import QBrush, QColor, QPen
 
 class Gauge(Otbp):
     """Gauge represents the gauge on the left or bottom of the drawing.
@@ -42,12 +42,18 @@ class Gauge(Otbp):
         if maxV % 10 != 0:
             self._max = (trunc(maxV / 10) + 1) * 10
 
+        w = self._max - self._min
+        self._stepWidth = w / 5
+        if self._stepWidth % 10 != 0:
+            self._stepWidth = (trunc(self._stepWidth / 10) + 1) * 10
+            self._max = self._min + 5 * self._stepWidth
+
     def partsHeights(self):
         """Return the height of the gauge"""
         if self._orientation == Orientation.VERTICAL:
             return [fabs(self._max - self._min)]
         else:
-            return [self._width]
+            return [self._width + 1, 5]
 
     def paint(self, scene):
         """Paint the guage onto the scene"""
@@ -57,11 +63,24 @@ class Gauge(Otbp):
             self._paintHorizontal(scene)            
 
     def _paintHorizontal(self, scene):
+        """Paint the horizontal gauge"""
         w = fabs(self._max - self._min) * self._xFac * 10
         x = self._x * self._xFac * 10
         y = (-self._y * self._yFac) * 10 + 70
-        scene.addRect(x, y, w, self._width * 10)
 
+        self._paintHorizontalDescription(scene, x, y, w)
+
+        pen, bBrush, wBrush = self._getPenAndBrush()
+        sw = self._stepWidth * self._xFac * 10
+        scene.addRect(x, y, sw, self._width * 10, pen, bBrush)
+        scene.addRect(x + sw, y, sw, self._width * 10, pen, wBrush)
+        scene.addRect(x + 2 * sw, y, sw, self._width * 10, pen, bBrush)
+        scene.addRect(x + 3 * sw, y, sw, self._width * 10, pen, wBrush)
+        scene.addRect(x + 4 * sw, y, sw, self._width * 10, pen, bBrush)
+
+    def _paintHorizontalDescription(self, scene, x, y, w):
+        """Paint the description of the horizontal gauge"""
+        # left
         y = y + (self._width + 1) * 10
         scene.addLine(x, y, x, y + 20)
         n = scene.addText("{:.2f} m".format(float(self._min) / 100))
@@ -69,6 +88,7 @@ class Gauge(Otbp):
         n.setX(x - n.boundingRect().width() / 2)
         n.setY(y + 20 + 1)
 
+        # right
         x = x + w
         scene.addLine(x, y, x, y + 20)
         n = scene.addText("{:.2f} m".format(float(self._max) / 100))
@@ -77,26 +97,44 @@ class Gauge(Otbp):
         n.setY(y + 20 + 1)
 
     def _paintVertical(self, scene):
+        """Pain the vertial gauge"""
         h = -fabs(self._max - self._min) * self._yFac * 10
         x = self._x * self._xFac * 10 - 80
         y = -self._y * self._yFac * 10
 
-        scene.addRect(x, y, self._width * 10, h)
+        self._paintVerticalDescription(scene, x, y, h)
 
+        pen, bBrush, wBrush = self._getPenAndBrush()
+        sw = -self._stepWidth * self._yFac * 10
+        scene.addRect(x, y, self._width * 10, sw, pen, bBrush)
+        scene.addRect(x, y + 1 * sw, self._width * 10, sw, pen, wBrush)
+        scene.addRect(x, y + 2 * sw, self._width * 10, sw, pen, bBrush)
+        scene.addRect(x, y + 3 * sw, self._width * 10, sw, pen, wBrush)
+        scene.addRect(x, y + 4 * sw, self._width * 10, sw, pen, bBrush)        
+
+    def _paintVerticalDescription(self, scene, x, y, h):
+        """Paint the description of the vertical gauge"""
+        # top
         x = x - 10
         y = y + h
-        n = scene.addText("{:.2f} m".format(float(self._min) / 100))
+        n = scene.addText("{:.2f} m".format(float(self._max) / 100))
         n.adjustSize()
         xLeft = x - n.textWidth()
         n.setX(xLeft)
         n.setY(y)
         scene.addLine(xLeft, y, x, y)
         
+        # bottom
         y = y - h
         n = scene.addText("{:.2f} m".format(float(self._min) / 100))
         n.adjustSize()
         n.setX(xLeft)
         n.setY(y - n.boundingRect().height() - 2)
         scene.addLine(xLeft, y, x, y)
-        
-        # QgsMessageLog.logMessage("x {}, y {}, min {}, max {}".format(x, y, self._min, self._max), level=Qgis.Info)
+
+    def _getPenAndBrush(self):
+        """Get the pen and brush"""
+        pen = QPen()
+        blackBrush = QBrush(QColor("black"))
+        whiteBrush = QBrush(QColor("white"))
+        return pen, blackBrush, whiteBrush
