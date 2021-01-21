@@ -21,8 +21,9 @@
 
 from qgis.core import Qgis, QgsMessageLog
 from math import fabs
+from .otbp import Otbp
 
-class Connector:
+class Connector(Otbp):
     """Connector represents the line connecting two petrographic
     drilling profiles.
     This class contains all relevant data for drawing"""
@@ -34,16 +35,6 @@ class Connector:
         self.x2 = 0.0
         self.y2 = 0.0 # in cm
         self.xOffset = 0.0
-        self._xFac = 1.0
-        self._yFac = 1.0
-
-    def setXFac(self, xFac):
-        """Set scaling factor for x-position"""
-        self._xFac = xFac
-
-    def setYFac(self, yFac):
-        """Set scaling factor for y-dimension"""
-        self._yFac = yFac
 
     def partsHeights(self):
         """Return the height of each connector"""
@@ -57,8 +48,3 @@ class Connector:
             self.y1 * self._yFac * -10, 
             self.x2 * self._xFac * 10, 
             self.y2 * self._yFac * -10)
-
-    def paintDescription(self, scene):
-        """Paint the connector's description"""
-        # nothing to paint
-        pass

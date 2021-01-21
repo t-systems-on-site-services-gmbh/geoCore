@@ -19,12 +19,12 @@
     along with geoCore.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from math import fabs
+from math import fabs, trunc
 from .orientation import Orientation
+from .otbp import Otbp
 from qgis.core import Qgis, QgsMessageLog
-import math
 
-class Gauge:
+class Gauge(Otbp):
     """Gauge represents the gauge on the left or bottom of the drawing.
     This class contains all relevant data for drawing"""
 
@@ -34,23 +34,13 @@ class Gauge:
         self._y = y
         self._min = minV
         self._max = maxV
-        self._xFac = 1.0
-        self._yFac = 1.0
         self._width = 1
         self._orientation = orientation
         
         if minV % 10 != 0:
-            self._min = math.trunc(minV / 10) * 10
+            self._min = trunc(minV / 10) * 10
         if maxV % 10 != 0:
-            self._max = (math.trunc(maxV / 10) + 1) * 10
-
-    def setXFac(self, xFac):
-        """Set scaling factor for x-position"""
-        self._xFac = xFac
-
-    def setYFac(self, yFac):
-        """Set scaling factor for y-dimension"""
-        self._yFac = yFac
+            self._max = (trunc(maxV / 10) + 1) * 10
 
     def partsHeights(self):
         """Return the height of the gauge"""
@@ -110,8 +100,3 @@ class Gauge:
         scene.addLine(xLeft, y, x, y)
         
         # QgsMessageLog.logMessage("x {}, y {}, min {}, max {}".format(x, y, self._min, self._max), level=Qgis.Info)
-
-    def paintDescription(self, scene):
-        """Paint the gauge's description"""
-        # nothing to paint
-        pass

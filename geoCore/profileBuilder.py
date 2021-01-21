@@ -276,7 +276,7 @@ class ProfileBuilder:
     def _getGauges(self, profiles):
         """Gets the gauges for the left and bottom side"""
         if (len(profiles) <= 1):
-            return
+            return []
 
         minx, maxx, miny, maxy = self._determineMinMax(profiles)
         
