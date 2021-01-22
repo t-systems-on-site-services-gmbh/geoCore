@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
 
+"""Helper script to create the plugin zip-file"""
+
 import glob
 import zipfile
 import os
 
-zipname = "geoCore.zip"
-pycache = "__pycache__"
+ZIPNAME = "geoCore.zip"
+PYCACHE = "__pycache__"
 excludes = [ "geoCore\\makeres.bat", "geoCore\\pylintrc"]
 additional = ["LICENSE", "README.md"]
 
-files = [f for f in glob.glob("geoCore/**/*.*", recursive=True) if f not in excludes and pycache not in f]
+files = [f for f in glob.glob("geoCore/**/*.*", recursive=True) 
+    if f not in excludes and PYCACHE not in f]
 
-if os.path.exists(zipname):
-    os.remove(zipname)
-with zipfile.ZipFile(zipname, "x") as myzip:
+if os.path.exists(ZIPNAME):
+    os.remove(ZIPNAME)
+with zipfile.ZipFile(ZIPNAME, "x") as myzip:
     for f in files:
         myzip.write(f)
     for f in additional:
         myzip.write(f, "geoCore\\" + f)
+        
