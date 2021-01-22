@@ -34,7 +34,7 @@ class Gauge(Otbp):
         self._y = y
         self._min = minV
         self._max = maxV
-        self._width = 1
+        self._width = 0.5
         self._orientation = orientation
         
         if minV % 10 != 0:
