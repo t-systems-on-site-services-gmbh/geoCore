@@ -11,7 +11,7 @@ PYCACHE = "__pycache__"
 excludes = [ "geoCore\\makeres.bat", "geoCore\\pylintrc"]
 additional = ["LICENSE", "README.md"]
 
-files = [f for f in glob.glob("geoCore/**/*.*", recursive=True) 
+files = [f for f in glob.glob("geoCore/**/*.*", recursive=True)
     if f not in excludes and PYCACHE not in f]
 
 if os.path.exists(ZIPNAME):
