@@ -20,7 +20,6 @@
 """
 
 from functools import reduce
-from qgis.core import Qgis, QgsMessageLog
 from .otbp import Otbp
 
 class Profile(Otbp):
@@ -57,7 +56,7 @@ class Profile(Otbp):
             b.paint(scene, self.x * self._xFac)
 
     def _paintLegend(self, scene):
-        """Paint legend explaining the width of the individual 
+        """Paint legend explaining the width of the individual
         layers/boxes below the profile"""
         yBottom = self.y - self.height()
         yPos = (yBottom * self._yFac - self.margin) * -10 # cm to mm
@@ -104,7 +103,7 @@ class Profile(Otbp):
         xpos = (self.x * self._xFac * 10) - top.textWidth() - (self.margin * 10) # cm to mm
         ypos = -yTop * self._yFac * 10 # cm to mm
         top.setX(xpos)
-        top.setY(ypos - 2) 
+        top.setY(ypos - 2)
         scene.addLine(xpos, ypos, 10 * (self.x * self._xFac - self.margin), ypos)
 
         yBottom = self.y - self.height()

@@ -21,7 +21,7 @@
 
 
 class Otbp:
-    """Otbp stands for object to be painted and is the 
+    """Otbp stands for object to be painted and is the
     base class for all objects (e.g. profiles, connectors and gauges)
     that will be painted later on."""
 

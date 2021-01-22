@@ -97,7 +97,7 @@ class ProfileBuilder:
 
                 x = f.attribute(self.config.settings["xCoord"])
                 y = f.attribute(self.config.settings["yCoord"])
-                
+
         actualProfiles = []
         actualFeatures = []
         for p, f in zip(profiles, features):
@@ -138,10 +138,10 @@ class ProfileBuilder:
 
             gg, kg = self._splitPetrographie(l[self.config.settings["petrography"]])
             pb.name = gg
-            try:    
+            try:
                 pb.width = boxes[gg]['width']
             except KeyError:
-                pb.width = 0.1                
+                pb.width = 0.1
                 self.showMessage("Warning", "Missing main group in petrography: {}"
                     .format(l[self.config.settings["petrography"]]), Qgis.Warning)
 
@@ -224,7 +224,7 @@ class ProfileBuilder:
                         found = True
                     yRight = yRight - pRight.boxes[r].height
                     r = r + 1
-                
+
                 if found:
                     connectors.append(c)
             lgLeft = pLeft.boxes[l].group
@@ -265,7 +265,7 @@ class ProfileBuilder:
                         c.y2 = pRight.y - sum([b.height for b in pRight.boxes[:rr+1]])
                         found = True
                     rr = rr - 1
-                
+
                 if found:
                     connectors.append(c)
 
@@ -275,11 +275,11 @@ class ProfileBuilder:
 
     def _getGauges(self, profiles):
         """Gets the gauges for the left and bottom side"""
-        if (len(profiles) <= 1):
+        if len(profiles) <= 1:
             return []
 
         minx, maxx, miny, maxy = self._determineMinMax(profiles)
-        
+
         gauges = []
         gauges.append(Gauge(minx, miny, minx, maxx, Orientation.HORIZONTAL))
         gauges.append(Gauge(minx, miny, miny, maxy, Orientation.VERTICAL))

@@ -35,16 +35,16 @@ class ProfilePainter:
         """Apply scaling factors in x- and y-dimension
         If None no scaling is applied for the x-position (i.e. xFac = 1.0)
         but auto-scaling for the height (y-dimension) is turned on."""
-        if xFac == None:
+        if xFac is None:
             self._xFac = 1.0
         else:
             self._xFac = xFac
-        
-        if yFac == None:
+
+        if yFac is None:
             self._yFac = 1.0
             self._doAutoScale = True
         else:
-            self._setYFac = yFac
+            self._yFac = yFac
             self._doAutoScale = False
 
     def paint(self, otbps, addDescription):
@@ -53,7 +53,7 @@ class ProfilePainter:
         (i.e. profiles and connectors). Parameter addDescription
         denotes if a description shall be added."""
         if self._doAutoScale:
-            self._setYFac(otbps)
+            self._setAutoYFac(otbps)
         for i in otbps:
             i.setXFac(self._xFac)
             i.setYFac(self._yFac)
@@ -61,12 +61,12 @@ class ProfilePainter:
             if addDescription:
                 i.paintDescription(self.scene)
 
-    def _setYFac(self, otbps):
+    def _setAutoYFac(self, otbps):
         """Set a smart scaling factor for the y-dimension"""
         facs = [ self._determineYFac(o) for o in otbps ]
         facsShrink = [ s for s in facs if s < 1.0 ]
         facsStretch = [ s for s in facs if s >= 1.0 ]
-        
+
         self._yFac = 1.0
 
         if (len(facsShrink) > 0) and (len(facsStretch) > 0):

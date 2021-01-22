@@ -17,9 +17,8 @@
 
     You should have received a copy of the GNU General Public License
     along with geoCore.  If not, see <https://www.gnu.org/licenses/>.
-"""    
+"""
 
-from qgis.core import Qgis, QgsMessageLog
 from math import fabs
 from .otbp import Otbp
 
@@ -44,7 +43,7 @@ class Connector(Otbp):
         """Paint connector onto scene"""
         # convert from cm to mm
         # direction of y-axis it top down, i.e. point (0,0) is in the upper left
-        scene.addLine((self.x1 * self._xFac + self.xOffset) * 10, 
-            self.y1 * self._yFac * -10, 
-            self.x2 * self._xFac * 10, 
+        scene.addLine((self.x1 * self._xFac + self.xOffset) * 10,
+            self.y1 * self._yFac * -10,
+            self.x2 * self._xFac * 10,
             self.y2 * self._yFac * -10)

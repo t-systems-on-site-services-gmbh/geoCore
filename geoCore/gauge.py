@@ -20,9 +20,9 @@
 """
 
 from math import fabs, trunc
+from qgis.PyQt.QtGui import QBrush, QColor, QPen
 from .orientation import Orientation
 from .otbp import Otbp
-from qgis.PyQt.QtGui import QBrush, QColor, QPen
 
 class Gauge(Otbp):
     """Gauge represents the gauge on the left or bottom of the drawing.
@@ -36,7 +36,7 @@ class Gauge(Otbp):
         self._max = maxV
         self._width = 0.5
         self._orientation = orientation
-        
+
         if minV % 10 != 0:
             self._min = trunc(minV / 10) * 10
         if maxV % 10 != 0:
@@ -126,7 +126,7 @@ class Gauge(Otbp):
         n.setX(xLeft)
         n.setY(y)
         scene.addLine(xLeft, y, x, y)
-        
+
         # bottom
         y = y - h
         n = scene.addText("{:.2f} m".format(float(self._min) / 100))
