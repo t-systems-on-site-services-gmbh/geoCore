@@ -95,7 +95,7 @@ class ProfileBuilder:
                 xp = xp + distance
                 yp = f.attribute(self.config.settings["zCoord"]) * 100 # convert to cm
 
-                profiles.append(self._getProfile(f, xp, yp))
+                profiles.append(self._getProfile(f.attribute("id"), xp, yp))
 
                 x = f.attribute(self.config.settings["xCoord"])
                 y = f.attribute(self.config.settings["yCoord"])
@@ -114,9 +114,8 @@ class ProfileBuilder:
 
         return actualProfiles + connectors + gauges
 
-    def _getProfile(self, feature, x, y):
+    def _getProfile(self, profileId, x, y):
         """Construct a profile from feature"""
-        profileId = feature.attribute("id")
         schichtdaten = self._getSchichtdaten(profileId)
         if schichtdaten is None:
             return None
@@ -226,11 +225,10 @@ class ProfileBuilder:
                         c.x2 = pRight.x
                         c.y2 = yRight
                         found = True
+                        connectors.append(c)
                     yRight = yRight - pRight.boxes[r].height
                     r = r + 1
 
-                if found:
-                    connectors.append(c)
             lgLeft = pLeft.boxes[l].group
             yLeft = yLeft - pLeft.boxes[l].height
 
@@ -248,10 +246,8 @@ class ProfileBuilder:
                         c.y1 = pLeft.y - sum([b.height for b in pLeft.boxes[:ll+1]])
                         c.xOffset = pLeft.boxes[ll].width
                         found = True
+                        connectors.append(c)
                     ll = ll - 1
-
-                if found:
-                    connectors.append(c)
 
             if l == len(pLeft.boxes) - 1:
                 # last profile box on the left
@@ -268,10 +264,8 @@ class ProfileBuilder:
                         c.x2 = pRight.x
                         c.y2 = pRight.y - sum([b.height for b in pRight.boxes[:rr+1]])
                         found = True
+                        connectors.append(c)
                     rr = rr - 1
-
-                if found:
-                    connectors.append(c)
 
             l = l + 1
 
