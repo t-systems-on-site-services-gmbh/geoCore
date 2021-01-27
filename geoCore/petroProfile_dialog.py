@@ -217,7 +217,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
                 pd.save(name)
             QgsMessageLog.logMessage("exported to {}".format(name),
                 level=Qgis.Info)
-        except:
+        except IOError:
             self.showMessage("Error", "Failed to export to {}".format(name),
                 Qgis.Critical)
 
@@ -295,10 +295,12 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
             https://www.gnu.org/licenses</a> for details.
             </p>
             <p>
-            <a href="https://github.com/t-systems-on-site-services-gmbh/geoCore/blob/master/geoCore/help/usage.md">Manual</a>
+            <a href="https://github.com/t-systems-on-site-services-gmbh/geoCore/blob/master/geoCore/help/usage.md">
+            Manual</a>
             </p>
             <p>
-            Citation: G. Bette & M. Mennenga 2020:  t-systems-on-site-services-gmbh/geoCore v0.7 (Version v0.7). Zenodo. http://doi.org/10.5281/zenodo.4347497
+            Citation: G. Bette & M. Mennenga 2020:  t-systems-on-site-services-gmbh/geoCore v0.7 (Version v0.7).
+            Zenodo. <a href="http://doi.org/10.5281/zenodo.4347497">http://doi.org/10.5281/zenodo.4347497</a>
             </p>
             """)
 

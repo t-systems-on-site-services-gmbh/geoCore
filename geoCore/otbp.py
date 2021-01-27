@@ -40,12 +40,10 @@ class Otbp:
 
     def partsHeights(self):
         """Return the height of the object"""
-        return 0
+        return 0.0
 
     def paint(self, scene):
         """Paint the object onto the scene"""
-        pass
 
     def paintDescription(self, scene):
         """Paint the object's description"""
-        pass

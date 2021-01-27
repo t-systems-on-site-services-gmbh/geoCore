@@ -22,7 +22,8 @@
 import re
 from math import sqrt
 from sys import maxsize
-from qgis.core import Qgis, QgsExpression, QgsFeatureRequest, QgsProject, QgsMessageLog
+from qgis.core import Qgis, QgsExpression, QgsFeatureRequest, QgsProject
+#from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtCore import QVariant
 
 from .geoCoreConfig import Config
@@ -89,7 +90,8 @@ class ProfileBuilder:
                 # The x-position (xp) of the drilling profile is the distance
                 # to the previous coordinate. We start with xp = 0.
                 # The y-position of the profile is the elevation (z-coordinate).
-                distance = sqrt((f.attribute(self.config.settings["xCoord"]) - x)**2 + (f.attribute(self.config.settings["yCoord"]) - y)**2)
+                distance = sqrt((f.attribute(self.config.settings["xCoord"]) - x)**2
+                            + (f.attribute(self.config.settings["yCoord"]) - y)**2)
                 xp = xp + distance
                 yp = f.attribute(self.config.settings["zCoord"]) * 100 # convert to cm
 
@@ -151,7 +153,8 @@ class ProfileBuilder:
 
             ggDict = self._cfgLookup(boxes, gg)
             infoList = []
-            infoList.append(self._cfgLookup(facies, l[self.config.settings["facies"]], errorValue=l[self.config.settings["facies"]]))
+            infoList.append(self._cfgLookup(facies, l[self.config.settings["facies"]],
+                errorValue=l[self.config.settings["facies"]]))
             infoList.append(self._cfgLookup(ggDict, 'longname', errorValue=gg))
             for k in kg:
                 kgDict = self._cfgLookup(descriptions, k)
@@ -162,7 +165,8 @@ class ProfileBuilder:
 
             profile.boxes.append(pb)
 
-            #QgsMessageLog.logMessage("Profile {} - petro: {}({}), width: {}, height: {}, x: {}, y: {}, info: {}".format(profileId, gg, kg, width, height, x, y, info), level=Qgis.Info)
+            # QgsMessageLog.logMessage("Profile {} - petro: {}({}), width: {}, height: {}, x: {}, y: {}, info: {}"
+            #   .format(profileId, gg, kg, width, height, x, y, info), level=Qgis.Info)
             y = y - pb.height
 
         return profile

@@ -28,6 +28,7 @@ class Profile(Otbp):
 
     def __init__(self, name):
         """Initialize the profile"""
+        super().__init__()
         self.x = 0.0
         self.y = 0.0 # in cm
         self.margin = 1 # margin for description

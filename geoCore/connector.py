@@ -29,6 +29,7 @@ class Connector(Otbp):
 
     def __init__(self):
         """Initialize the connector"""
+        super().__init__()
         self.x1 = 0.0
         self.y1 = 0.0
         self.x2 = 0.0

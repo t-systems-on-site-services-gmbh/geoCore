@@ -85,7 +85,7 @@ class ProfilePainter:
 
         if len(facsShrink) > 0:
             return max(facsShrink)
-        elif len(facsStretch) > 0:
+        if len(facsStretch) > 0:
             return min(facsStretch)
-        else:
-            return 1.0
+
+        return 1.0

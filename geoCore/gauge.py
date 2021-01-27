@@ -30,6 +30,7 @@ class Gauge(Otbp):
 
     def __init__(self, x, y, minV, maxV, orientation):
         """Initialize the connector"""
+        super().__init__()
         self._x = x
         self._y = y
         self._min = minV
