@@ -45,7 +45,7 @@ class Profile(Otbp):
 
     def setYFac(self, yFac):
         """Set scaling factor for y-dimension"""
-        self._yFac = yFac
+        super().setYFac(yFac)
         for b in self.boxes:
             b.setYFac(yFac)
 

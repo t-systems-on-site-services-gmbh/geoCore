@@ -164,8 +164,8 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         """Filter wheel event"""
         if e.type() == QEvent.Wheel:
             return True
-        else:
-            return super().eventFilter(obj, e)
+
+        return super().eventFilter(obj, e)
 
     def _exportToFile(self):
         """Export drawing to file"""
@@ -173,10 +173,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         if (name is None) or (len(name) == 0):
             return
 
-        if Path(name).suffix.upper() == ".SVG":
-            self._exportWithPainter(name, self._svgPaintDevice)
-        else:
-            self._exportWithPainter(name, self._imgPaintDevice)
+        self._exportWithPainter(name)
 
     def _svgPaintDevice(self, name, sourceRect, targetRect):
         """Get QSvgGenerator as paint device"""
@@ -189,24 +186,32 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         generator.setFileName(name)
         return generator
 
-    def _imgPaintDevice(self, name, sourceRect, targetRect):
+    def _imgPaintDevice(self, sourceRect):
         """Get QImage as paint device"""
         img = QImage(sourceRect.width(), sourceRect.height(),
             QImage.Format_ARGB32)
         img.fill(QColor("transparent"))
         return img
 
-    def _exportWithPainter(self, name, getPaintDevice):
+    def _getSourceAndTargetRect(self):
+        """Returns the source and target rect for export"""
+        self.scene.clearSelection()
+        margin = 5
+        sourceRect = self.scene.itemsBoundingRect()
+        sourceRect.adjust(-margin, -margin, margin, margin)
+        targetRect = QRectF(0, 0, sourceRect.width(), sourceRect.height())
+        return sourceRect, targetRect
+
+    def _exportWithPainter(self, name):
         """Export as image file"""
         try:
-            self.scene.clearSelection()
-            margin = 5
-            sourceRect = self.scene.itemsBoundingRect()
-            sourceRect.adjust(-margin, -margin, margin, margin)
+            sourceRect, targetRect = self._getSourceAndTargetRect()
 
-            targetRect = QRectF(0, 0, sourceRect.width(), sourceRect.height())
-
-            pd = getPaintDevice(name, sourceRect, targetRect)
+            pd = None
+            if Path(name).suffix.upper() == ".SVG":
+                pd = self._svgPaintDevice(name, sourceRect, targetRect)
+            else:
+                pd = self._imgPaintDevice(sourceRect)
 
             painter = QPainter()
             painter.begin(pd)
