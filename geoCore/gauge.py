@@ -56,8 +56,8 @@ class Gauge(Otbp):
         """Return the height of the gauge"""
         if self._orientation == Orientation.VERTICAL:
             return [fabs(self._max - self._min)]
-        else:
-            return [self._width + 1, 5]
+
+        return [self._width + 1, 5]
 
     def paint(self, scene):
         """Paint the guage onto the scene"""
