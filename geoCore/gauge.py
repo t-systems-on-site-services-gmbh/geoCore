@@ -35,22 +35,11 @@ class Gauge(Otbp):
         self._y = y
         self._min = minV
         self._max = maxV
+        self._stepWidth = (maxV - minV) / 5
         self._width = 0.5
         self._orientation = orientation
 
-        if minV % 10 != 0:
-            self._min = trunc(minV / 10) * 10
-        if maxV % 10 != 0:
-            self._max = (trunc(maxV / 10) + 1) * 10
-
-        w = self._max - self._min
-        self._stepWidth = w / 5
-        if self._stepWidth % 10 != 0:
-            if self._stepWidth % 10 < 5:
-                self._stepWidth = trunc(self._stepWidth / 10) * 10
-            else:
-                self._stepWidth = (trunc(self._stepWidth / 10) + 1) * 10
-            self._max = self._min + 5 * self._stepWidth
+        self._adjustMinMax(minV, maxV)
 
     def partsHeights(self):
         """Return the height of the gauge"""
@@ -65,6 +54,51 @@ class Gauge(Otbp):
             self._paintVertical(scene)
         else:
             self._paintHorizontal(scene)
+
+    def _adjustMinMax(self, minV, maxV):
+        """Adjust the min and max value for a nice gauge"""
+        w = (maxV - minV) / 100
+        if w < 10:
+            self._adjustMinMaxLt10(minV, maxV)
+        elif w < 100:
+            self._adjustMinMaxStep(minV, maxV, 5)
+        else:
+            self._adjustMinMaxStep(minV, maxV, 10)
+
+    def _adjustMinMaxLt10(self, minV, maxV):
+        """Adjust the min and max value. The delta is less than 10 m."""
+        if minV % 10 != 0:
+            self._min = trunc(minV / 10) * 10
+        if maxV % 10 != 0:
+            self._max = (trunc(maxV / 10) + 1) * 10
+
+        w = self._max - self._min
+        self._stepWidth = w / 5
+        if self._stepWidth % 10 != 0:
+            if self._stepWidth % 10 < 5:
+                self._stepWidth = trunc(self._stepWidth / 10) * 10
+            else:
+                self._stepWidth = (trunc(self._stepWidth / 10) + 1) * 10
+            self._max = self._min + 5 * self._stepWidth
+
+    def _adjustMinMaxStep(self, minV, maxV, mult):
+        """Adjust the min and max value. We aim at values which are multiples of 'mult'."""
+        minVm = minV / 100
+        maxVm = maxV / 100
+
+        if minVm % mult != 0:
+            self._min = trunc(minVm / mult) * mult * 100
+        if maxVm % mult != 0:
+            self._max = (trunc(maxVm / mult) + 1) * mult * 100
+
+        w = self._max - self._min
+        self._stepWidth = w / 5
+        if self._stepWidth % mult != 0:
+            if self._stepWidth % mult < (mult / 2):
+                self._stepWidth = trunc(self._stepWidth / mult) * mult
+            else:
+                self._stepWidth = (trunc(self._stepWidth / mult) + 1) * mult
+            self._max = self._min + 5 * self._stepWidth
 
     def _paintHorizontal(self, scene):
         """Paint the horizontal gauge"""
