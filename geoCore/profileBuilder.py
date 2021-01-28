@@ -23,7 +23,7 @@ import re
 from math import sqrt
 from sys import maxsize
 from qgis.core import Qgis, QgsExpression, QgsFeatureRequest, QgsProject
-#from qgis.core import Qgis, QgsMessageLog
+# from qgis.core import QgsMessageLog
 from qgis.PyQt.QtCore import QVariant
 
 from .geoCoreConfig import Config
@@ -95,7 +95,7 @@ class ProfileBuilder:
                 xp = xp + distance
                 yp = f.attribute(self.config.settings["zCoord"]) * 100 # convert to cm
 
-                profiles.append(self._getProfile(f.attribute("id"), xp, yp))
+                profiles.append(self._getProfile(f.attribute("id"), xp * 100, yp))
 
                 x = f.attribute(self.config.settings["xCoord"])
                 y = f.attribute(self.config.settings["yCoord"])
@@ -165,7 +165,7 @@ class ProfileBuilder:
             profile.boxes.append(pb)
 
             # QgsMessageLog.logMessage("Profile {} - petro: {}({}), width: {}, height: {}, x: {}, y: {}, info: {}"
-            #   .format(profileId, gg, kg, width, height, x, y, info), level=Qgis.Info)
+            #     .format(profileId, gg, kg, pb.width, pb.height, x, y, pb.info), level=Qgis.Info)
             y = y - pb.height
 
         return profile
