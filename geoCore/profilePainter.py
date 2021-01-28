@@ -19,17 +19,21 @@
     along with geoCore.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+from .profile import Profile
+
 class ProfilePainter:
     """This class is used to construct the graphics items"""
 
-    def __init__(self, scene, viewHeight):
+    def __init__(self, scene, viewWidth, viewHeight):
         """Initialize ProfilePainter.
         All constructed items are added to the given scene."""
         self.scene = scene
         self._viewHeight = viewHeight
+        self._viewWidth = viewWidth
         self._xFac = 1.0
         self._yFac = 1.0
-        self._doAutoScale = True
+        self._doAutoScaleX = True
+        self._doAutoScaleY = True
 
     def applyScale(self, xFac, yFac):
         """Apply scaling factors in x- and y-dimension
@@ -37,22 +41,26 @@ class ProfilePainter:
         but auto-scaling for the height (y-dimension) is turned on."""
         if xFac is None:
             self._xFac = 1.0
+            self._doAutoScaleX = True
         else:
             self._xFac = xFac
+            self._doAutoScaleX = False
 
         if yFac is None:
             self._yFac = 1.0
-            self._doAutoScale = True
+            self._doAutoScaleY = True
         else:
             self._yFac = yFac
-            self._doAutoScale = False
+            self._doAutoScaleY = False
 
     def paint(self, otbps, addDescription):
         """Construct items.
         The parameter otbps stands for "objects to be painted"
         (i.e. profiles and connectors). Parameter addDescription
         denotes if a description shall be added."""
-        if self._doAutoScale:
+        if self._doAutoScaleX:
+            self._setAutoXFac(otbps)
+        if self._doAutoScaleY:
             self._setAutoYFac(otbps)
         for i in otbps:
             i.setXFac(self._xFac)
@@ -60,6 +68,20 @@ class ProfilePainter:
             i.paint(self.scene)
             if addDescription:
                 i.paintDescription(self.scene)
+
+    def _setAutoXFac(self, otbps):
+        """Set smart scaling factor for the x-dimension"""
+        xPositions = [ p.x for p in otbps if isinstance(p, Profile) ]
+
+        if len(xPositions) <= 1:
+            return
+
+        diffs = list(map(lambda x, y: x - y, xPositions[1:], xPositions))
+
+        margin = 10
+        vw = (self._viewWidth - margin) / 28.35 # pixel to cm
+
+        self._xFac = vw / min(diffs)
 
     def _setAutoYFac(self, otbps):
         """Set a smart scaling factor for the y-dimension"""

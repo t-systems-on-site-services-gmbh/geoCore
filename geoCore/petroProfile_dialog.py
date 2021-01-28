@@ -276,8 +276,8 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         builder = ProfileBuilder(self.iface.activeLayer().name(),
             self.showMessage)
         pac = builder.getProfilesAndConnectors(features)
-        painter = ProfilePainter(self.scene, self.view.height())
-        painter.applyScale(1.0, None)
+        painter = ProfilePainter(self.scene, self.view.width(), self.view.height())
+        painter.applyScale(None, None)
         painter.paint(pac, len(pac) == 1)
         self.view.resetTransform()
         self.view.setSceneRect(self.scene.itemsBoundingRect())
