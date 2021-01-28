@@ -12,7 +12,7 @@ profile=no
 
 # Add files or directories to the blacklist. They should be base names, not
 # paths.
-ignore=CVS,resources.py,petroProfile.py
+ignore=CVS,resources.py,petroProfile.py,__init__.py
 
 # Pickle collected data for later comparisons.
 persistent=yes
@@ -227,14 +227,14 @@ int-import-graph=
 [DESIGN]
 
 # Maximum number of arguments for function / method
-max-args=5
+max-args=6
 
 # Argument names that match this expression will be ignored. Default to name
 # with leading underscore
 ignored-argument-names=_.*
 
 # Maximum number of locals for function / method body
-max-locals=15
+max-locals=20
 
 # Maximum number of return / yield for function / method body
 max-returns=6
@@ -249,7 +249,7 @@ max-statements=50
 max-parents=7
 
 # Maximum number of attributes for a class (see R0902).
-max-attributes=7
+max-attributes=715
 
 # Minimum number of public methods for a class (see R0903).
 min-public-methods=2
