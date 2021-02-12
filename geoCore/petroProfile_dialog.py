@@ -72,22 +72,22 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def _setupGeoDirectionActions(self):
         """Set up actions for geo-directions"""
-        self._nsAction = QAction("North -> South", self)
+        self._nsAction = QAction("North \u2794 South", self)
         self._nsAction.triggered.connect(self.drawProfilesNorthSouth)
         self._nsAction.setEnabled(True)
         self._nsAction.setCheckable(True)
 
-        self._snAction = QAction("South -> North", self)
+        self._snAction = QAction("South \u2794 North", self)
         self._snAction.triggered.connect(self.drawProfilesSouthNorth)
         self._snAction.setEnabled(True)
         self._snAction.setCheckable(True)
 
-        self._weAction = QAction("West -> East", self)
+        self._weAction = QAction("West \u2794 East", self)
         self._weAction.triggered.connect(self.drawProfilesWestEast)
         self._weAction.setEnabled(True)
         self._weAction.setCheckable(True)
 
-        self._ewAction = QAction("East -> West", self)
+        self._ewAction = QAction("East \u2794 West", self)
         self._ewAction.triggered.connect(self.drawProfilesEastWest)
         self._ewAction.setEnabled(True)
         self._ewAction.setCheckable(True)
