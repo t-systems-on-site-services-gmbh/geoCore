@@ -10,6 +10,9 @@ The QGIS Plugin geoCore is under development by [T-Systems on site services GmbH
 ## Update Warning
 **Please backup your geoCore.yml, config.yml and the additional .svg files before you update the plugin. If not, the files will be deleted due to the QGIS updating process!**
 
+## Citation
+G. Bette & M. Mennenga 2021: t-systems-on-site-services-gmbh/geoCore v0.8 (Version v0.8). Zenodo. http://doi.org/10.5281/zenodo.4548887
+
 ## Aim
 
 The aim of the plugin is to create a flexible and easy way to display and export drilling profiles according to your own layout in QGIS. It allows the user to account for the different types of representation and across different sciences. This means that the uniformly processed data can be used by different users according to their specifications.

@@ -26,3 +26,6 @@ GNU General Public License v3.0 or later
 
 See [LICENSE](LICENSE)
 
+## Badges
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4548887.svg)](https://doi.org/10.5281/zenodo.4548887)

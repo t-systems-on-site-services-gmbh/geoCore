@@ -324,6 +324,10 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
             <a href="https://www.gnu.org/licenses/gpl-3.0-standalone.html">
             https://www.gnu.org/licenses</a> for details.
             </p>
+			<p>
+            Citation: G. Bette & M. Mennenga 2021:  t-systems-on-site-services-gmbh/geoCore v0.8 (Version v0.8).
+            Zenodo. <a href=" http://doi.org/10.5281/zenodo.4548887"> http://doi.org/10.5281/zenodo.4548887</a>
+            </p>
             <p>
             <a href="https://github.com/t-systems-on-site-services-gmbh/geoCore/blob/master/geoCore/help/usage.md">
             Manual</a>
