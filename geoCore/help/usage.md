@@ -3,12 +3,12 @@
 *Authors Gerrit Bette (1); Moritz Mennenga (2)*
 
 1. T-Systems on site services GmbH
-2. Niedersächsisches Institut für historische Küstenforschung, Viktoriastr. 26/28, 26386 Wilhelmshaven
+2. Lower Saxony Institute for Historical Coastal Research, Viktoriastr. 26/28, 26386 Wilhelmshaven
 
 The QGIS Plugin geoCore is under development by [T-Systems on site services GmbH](https://www.t-systems-onsite.de/) based on the idea of the [Lower Saxony Institute for Historical Coastal Research Wilhelmshaven (NIhK)](www.nihk.de).
 
-## Citation
-G. Bette & M. Mennenga 2020:  t-systems-on-site-services-gmbh/geoCore v0.7 (Version v0.7). Zenodo. http://doi.org/10.5281/zenodo.4347497
+## Update Warning
+**Please backup your geoCore.yml, config.yml and the additional .svg files before you update the plugin. If not, the will be deleted due to the QGIS updating process!**
 
 ## Aim
 
@@ -142,3 +142,13 @@ colors:
 *The plugin is still under development - see [issues](https://github.com/t-systems-on-site-services-gmbh/geoCore/issues)*
 
 If all files are available as described and the definitions are entered as required, the plug-in can be used. First, the shape file and the corresponding text file with the layer data must be imported. It is now possible to display a single or multiple profiles. To do this, select all the desired boreholes with the QGIS Selection Tool and click on the geoCore icon (or choose the menu entry Plugins -> geoCore -> Show drilling profile). A dialog opens showing the drilling profile(s). geoCore’s user interface is kept very simple and should be self-explanatory. A right click on the dialog opens the context menu which allows to export the profile as SVG. Furthermore you can rearrange the drilling profiles if you are showing multiple at once. If the *group* parameter contains an entry for several profiles, the layers are automatically connected. Using the mouse wheel you can zoom in and out. The middle mouse button allows for panning. This is just like navigating the QGIS map.
+
+### Context menu
+A right click on the dialog opens the context menu. You have the following options:
+
+*    Scale: Changing the scales of x- and y-axis
+*    Export as: Export the representation as
+*    North -> South ...: Change the order of the corings
+*    Manual: Open the manual
+*    About: Informations about the license and the citation
+
