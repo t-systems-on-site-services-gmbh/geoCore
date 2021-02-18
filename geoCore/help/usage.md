@@ -8,7 +8,7 @@
 The QGIS Plugin geoCore is under development by [T-Systems on site services GmbH](https://www.t-systems-onsite.de/) based on the idea of the [Lower Saxony Institute for Historical Coastal Research Wilhelmshaven (NIhK)](www.nihk.de).
 
 ## Update Warning
-**Please backup your geoCore.yml, config.yml and the additional .svg files before you update the plugin. If not, the will be deleted due to the QGIS updating process!**
+**Please backup your geoCore.yml, config.yml and the additional .svg files before you update the plugin. If not, the files will be deleted due to the QGIS updating process!**
 
 ## Aim
 
@@ -57,10 +57,10 @@ ID |	layerno |	petrography |	facies |	comment |	colour |	depth_from |	depth_to |
 
 *    ID -> Key value that is also available in the drilling table
 *    layerno -> layernumber (unique per hole)
-*   petrography -> description of the shift. The definition is determined by the * geoCore.yml * (see below)
+*   petrography -> description of the shift. The definition is determined by the **geoCore.yml** (see below)
 *    facies -> only for the description text
 *    comment -> is used in addition to the description of the layer on the drilling profile
-*    colour -> Description of the color of the layer. The definition is determined by the * geoCore.yml * (see below)
+*    colour -> Description of the color of the layer. The definition is determined by the **geoCore.yml** (see below)
 *    depth_from -> Top of the layer in centimeters below the terrain surface
 *    depth_to -> Lower edge of the layer in centimeters below the terrain surface
 *    group -> Value for grouping layers of different profiles (acre in profile 1 corresponds to acre in profile 2)
