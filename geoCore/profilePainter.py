@@ -1,7 +1,7 @@
 """ This module contains the class profile Painter
 
     geoCore - a QGIS plugin for drawing drilling profiles
-    Copyright (C) 2019, 2020  Gerrit Bette, T-Systems on site services GmbH
+    Copyright (C) 2019 - 2021  Gerrit Bette, T-Systems on site services GmbH
 
     This file is part of geoCore.
 
@@ -19,43 +19,84 @@
     along with geoCore.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+from .profile import Profile
+
 class ProfilePainter:
     """This class is used to construct the graphics items"""
 
-    def __init__(self, scene, viewHeight):
+    def __init__(self, scene, viewWidth, viewHeight):
         """Initialize ProfilePainter.
         All constructed items are added to the given scene."""
         self.scene = scene
         self._viewHeight = viewHeight
+        self._viewWidth = viewWidth
+        self._xFac = 1.0
+        self._yFac = 1.0
+        self._doAutoScaleX = True
+        self._doAutoScaleY = True
 
-    def paint(self, otbps, description):
+    def applyScale(self, xFac, yFac):
+        """Apply scaling factors in x- and y-dimension
+        If None no scaling is applied for the x-position (i.e. xFac = 1.0)
+        but auto-scaling for the height (y-dimension) is turned on."""
+        if xFac is None:
+            self._xFac = 1.0
+            self._doAutoScaleX = True
+        else:
+            self._xFac = xFac
+            self._doAutoScaleX = False
+
+        if yFac is None:
+            self._yFac = 1.0
+            self._doAutoScaleY = True
+        else:
+            self._yFac = yFac
+            self._doAutoScaleY = False
+
+    def paint(self, otbps, addDescription):
         """Construct items.
         The parameter otbps stands for "objects to be painted"
-        (i.e. profiles and connectors). Parameter description
+        (i.e. profiles and connectors). Parameter addDescription
         denotes if a description shall be added."""
-        self._setYFac(otbps)
+        if self._doAutoScaleX:
+            self._setAutoXFac(otbps)
+        if self._doAutoScaleY:
+            self._setAutoYFac(otbps)
         for i in otbps:
+            i.setXFac(self._xFac)
+            i.setYFac(self._yFac)
             i.paint(self.scene)
-            if description:
+            if addDescription:
                 i.paintDescription(self.scene)
 
-    def _setYFac(self, otbps):
+    def _setAutoXFac(self, otbps):
+        """Set smart scaling factor for the x-dimension"""
+        xPositions = [ p.x for p in otbps if isinstance(p, Profile) ]
+
+        if len(xPositions) <= 1:
+            return
+
+        diffs = list(map(lambda x, y: x - y, xPositions[1:], xPositions))
+
+        margin = 10
+        vw = (self._viewWidth - margin) / 28.35 # pixel to cm
+
+        self._xFac = vw / min(diffs)
+
+    def _setAutoYFac(self, otbps):
         """Set a smart scaling factor for the y-dimension"""
         facs = [ self._determineYFac(o) for o in otbps ]
         facsShrink = [ s for s in facs if s < 1.0 ]
         facsStretch = [ s for s in facs if s >= 1.0 ]
 
-        yFac = 1.0
-        
+        self._yFac = 1.0
+
         if (len(facsShrink) > 0) and (len(facsStretch) > 0):
-            yFac = 1.0
+            self._yFac = 1.0
         elif len(facsShrink) > 0:
-            yFac = max(facsShrink)
+            self._yFac = max(facsShrink)
         elif len(facsStretch) > 0:
-            yFac = min(facsStretch)
-        
-        for o in otbps:
-            o.setYFac(yFac)
+            self._yFac = min(facsStretch)
 
     def _determineYFac(self, otbp):
         """Determine a smart scaling factor for the y-dimension"""
@@ -66,7 +107,7 @@ class ProfilePainter:
 
         if len(facsShrink) > 0:
             return max(facsShrink)
-        elif len(facsStretch) > 0:
+        if len(facsStretch) > 0:
             return min(facsStretch)
-        else:
-            return 1.0
+
+        return 1.0

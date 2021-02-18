@@ -19,9 +19,8 @@
     along with geoCore.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-#from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtGui import QBrush, QColor, QPen
-from qgis.core import Qgis, QgsMessageLog
+#from qgis.core import Qgis, QgsMessageLog
 
 class ProfileBox:
     """ProfileBox represents one layer of a petrographic drilling profile.
@@ -62,7 +61,7 @@ class ProfileBox:
 
     def _paintTopDepthMark(self, scene, xpos):
         """Paint depth at the top of the layer"""
-        x, y, w, h = self._getPosAndDims(xpos)
+        x, y, _, _ = self._getPosAndDims(xpos)
         d = scene.addText("{:.2f} cm".format(float(self.depth - self.height)))
         d.adjustSize()
         d.setX(x)
@@ -72,7 +71,7 @@ class ProfileBox:
 
     def _paintDepthMark(self, scene, xpos):
         """Paint depth at the bottom of the layer box"""
-        x, y, w, h = self._getPosAndDims(xpos)
+        x, y, _, h = self._getPosAndDims(xpos)
         d = scene.addText("{:.2f} cm".format(float(self.depth)))
         d.adjustSize()
         d.setX(x)
@@ -83,7 +82,7 @@ class ProfileBox:
 
     def _paintInfo(self, scene, xpos, xoffset):
         """Paint the info text"""
-        x, y, w, h = self._getPosAndDims(xpos)
+        x, y, _, _ = self._getPosAndDims(xpos)
         t = scene.addText(self.info)
         t.setX(x + xoffset)
         t.setY(y)

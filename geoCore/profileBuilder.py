@@ -1,7 +1,7 @@
 """ Module to construct profiles
 
     geoCore - a QGIS plugin for drawing drilling profiles
-    Copyright (C) 2019, 2020  Gerrit Bette, T-Systems on site services GmbH
+    Copyright (C) 2019 - 2021  Gerrit Bette, T-Systems on site services GmbH
 
     This file is part of geoCore.
 
@@ -21,13 +21,17 @@
 
 import re
 from math import sqrt
-from qgis.core import Qgis, QgsExpression, QgsFeatureRequest, QgsProject, QgsMessageLog
+from sys import maxsize
+from qgis.core import Qgis, QgsExpression, QgsFeatureRequest, QgsProject
+# from qgis.core import QgsMessageLog
 from qgis.PyQt.QtCore import QVariant
 
 from .geoCoreConfig import Config
 from .profile import Profile
 from .profileBox import ProfileBox
 from .connector import Connector
+from .orientation import Orientation
+from .gauge import Gauge
 
 class ProfileBuilder:
     """This class constructs the drilling profiles"""
@@ -86,15 +90,16 @@ class ProfileBuilder:
                 # The x-position (xp) of the drilling profile is the distance
                 # to the previous coordinate. We start with xp = 0.
                 # The y-position of the profile is the elevation (z-coordinate).
-                distance = sqrt((f.attribute(self.config.settings["xCoord"]) - x)**2 + (f.attribute(self.config.settings["yCoord"]) - y)**2)
+                distance = sqrt((f.attribute(self.config.settings["xCoord"]) - x)**2
+                            + (f.attribute(self.config.settings["yCoord"]) - y)**2)
                 xp = xp + distance
                 yp = f.attribute(self.config.settings["zCoord"]) * 100 # convert to cm
 
-                profiles.append(self._getProfile(f, xp, yp))
+                profiles.append(self._getProfile(f.attribute("id"), xp * 100, yp))
 
                 x = f.attribute(self.config.settings["xCoord"])
                 y = f.attribute(self.config.settings["yCoord"])
-                
+
         actualProfiles = []
         actualFeatures = []
         for p, f in zip(profiles, features):
@@ -105,12 +110,12 @@ class ProfileBuilder:
             self.showMessage("Info", "Select at least one feature or activate the correct layer.", Qgis.Info)
 
         connectors = self._connectProfiles(actualProfiles, actualFeatures)
+        gauges = self._getGauges(actualProfiles)
 
-        return actualProfiles + connectors
+        return actualProfiles + connectors + gauges
 
-    def _getProfile(self, feature, x, y):
+    def _getProfile(self, profileId, x, y):
         """Construct a profile from feature"""
-        profileId = feature.attribute("id")
         schichtdaten = self._getSchichtdaten(profileId)
         if schichtdaten is None:
             return None
@@ -134,10 +139,10 @@ class ProfileBuilder:
 
             gg, kg = self._splitPetrographie(l[self.config.settings["petrography"]])
             pb.name = gg
-            try:    
+            try:
                 pb.width = boxes[gg]['width']
             except KeyError:
-                pb.width = 0.1                
+                pb.width = 0.1
                 self.showMessage("Warning", "Missing main group in petrography: {}"
                     .format(l[self.config.settings["petrography"]]), Qgis.Warning)
 
@@ -147,7 +152,8 @@ class ProfileBuilder:
 
             ggDict = self._cfgLookup(boxes, gg)
             infoList = []
-            infoList.append(self._cfgLookup(facies, l[self.config.settings["facies"]], errorValue=l[self.config.settings["facies"]]))
+            infoList.append(self._cfgLookup(facies, l[self.config.settings["facies"]],
+                errorValue=l[self.config.settings["facies"]]))
             infoList.append(self._cfgLookup(ggDict, 'longname', errorValue=gg))
             for k in kg:
                 kgDict = self._cfgLookup(descriptions, k)
@@ -158,7 +164,8 @@ class ProfileBuilder:
 
             profile.boxes.append(pb)
 
-            #QgsMessageLog.logMessage("Profile {} - petro: {}({}), width: {}, height: {}, x: {}, y: {}, info: {}".format(profileId, gg, kg, width, height, x, y, info), level=Qgis.Info)
+            # QgsMessageLog.logMessage("Profile {} - petro: {}({}), width: {}, height: {}, x: {}, y: {}, info: {}"
+            #     .format(profileId, gg, kg, pb.width, pb.height, x, y, pb.info), level=Qgis.Info)
             y = y - pb.height
 
         return profile
@@ -207,8 +214,9 @@ class ProfileBuilder:
             if lgLeft != pLeft.boxes[l].group:
                 # new connector
                 c = Connector()
-                c.x1 = pLeft.x + pLeft.boxes[l].width
+                c.x1 = pLeft.x
                 c.y1 = yLeft
+                c.xOffset = pLeft.boxes[l].width
 
                 # find the corresponding group on the right side
                 found = False
@@ -217,11 +225,10 @@ class ProfileBuilder:
                         c.x2 = pRight.x
                         c.y2 = yRight
                         found = True
+                        connectors.append(c)
                     yRight = yRight - pRight.boxes[r].height
                     r = r + 1
-                
-                if found:
-                    connectors.append(c)
+
             lgLeft = pLeft.boxes[l].group
             yLeft = yLeft - pLeft.boxes[l].height
 
@@ -235,19 +242,19 @@ class ProfileBuilder:
                 ll = len(pLeft.boxes) - 1
                 while ll >= l and not found:
                     if pLeft.boxes[ll].group == pRight.boxes[r - 1].group:
-                        c.x1 = pLeft.x + pLeft.boxes[ll].width
+                        c.x1 = pLeft.x
                         c.y1 = pLeft.y - sum([b.height for b in pLeft.boxes[:ll+1]])
+                        c.xOffset = pLeft.boxes[ll].width
                         found = True
+                        connectors.append(c)
                     ll = ll - 1
-
-                if found:
-                    connectors.append(c)
 
             if l == len(pLeft.boxes) - 1:
                 # last profile box on the left
                 c = Connector()
-                c.x1 = pLeft.x + pLeft.boxes[l].width
+                c.x1 = pLeft.x
                 c.y1 = pLeft.y - pLeft.height()
+                c.xOffset = pLeft.boxes[l].width
 
                 # connect to last corresponding group on the right
                 found = False
@@ -257,14 +264,38 @@ class ProfileBuilder:
                         c.x2 = pRight.x
                         c.y2 = pRight.y - sum([b.height for b in pRight.boxes[:rr+1]])
                         found = True
+                        connectors.append(c)
                     rr = rr - 1
-                
-                if found:
-                    connectors.append(c)
 
             l = l + 1
 
         return connectors
+
+    def _getGauges(self, profiles):
+        """Gets the gauges for the left and bottom side"""
+        if len(profiles) <= 1:
+            return []
+
+        minx, maxx, miny, maxy = self._determineMinMax(profiles)
+
+        gauges = []
+        gauges.append(Gauge(minx, miny, minx, maxx, Orientation.HORIZONTAL))
+        gauges.append(Gauge(minx, miny, miny, maxy, Orientation.VERTICAL))
+
+        return gauges
+
+    def _determineMinMax(self, profiles):
+        """Determine the min and max values in x- and y-dimension"""
+        minx = maxsize
+        maxx = 0
+        miny = maxsize
+        maxy = 0
+        for p in profiles:
+            minx = min(minx, p.x)
+            maxx = max(maxx, p.x)
+            miny = min(miny, p.y, p.y - p.height())
+            maxy = max(maxy, p.y, p.y - p.height())
+        return minx, maxx, miny, maxy
 
     def showErrorMessage(self, title, message):
         """Display an error message"""
