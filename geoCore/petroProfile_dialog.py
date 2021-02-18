@@ -328,10 +328,6 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
             <a href="https://github.com/t-systems-on-site-services-gmbh/geoCore/blob/master/geoCore/help/usage.md">
             Manual</a>
             </p>
-            <p>
-            Citation: G. Bette & M. Mennenga 2020:  t-systems-on-site-services-gmbh/geoCore v0.7 (Version v0.7).
-            Zenodo. <a href="http://doi.org/10.5281/zenodo.4347497">http://doi.org/10.5281/zenodo.4347497</a>
-            </p>
             """)
 
     def _openManual(self):
