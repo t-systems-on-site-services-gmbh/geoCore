@@ -40,6 +40,7 @@ from qgis.core import Qgis, QgsMessageLog
 
 from .profileBuilder import ProfileBuilder
 from .profilePainter import ProfilePainter
+from .scale_dialog import ScaleDialog
 
 # This loads your .ui file so that PyQt can populate your plugin
 # with the elements from Qt Designer
@@ -62,6 +63,8 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         self.iface = iface
         self._setupScene()
         self._setupGeoDirectionActions()
+        self._xFac = None
+        self._yFac = None
 
     def _setupScene(self):
         """Set up a new scene"""
@@ -95,6 +98,11 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
     def _getActions(self):
         """Get actions that are displayed in the context menu"""
         actions = []
+
+        scaleAction = QAction("Scale...", self)
+        scaleAction.triggered.connect(self._scale)
+        scaleAction.setEnabled(True)
+        actions.append(scaleAction)
 
         exportAction = QAction("Export as...", self)
         exportAction.triggered.connect(self._exportToFile)
@@ -166,6 +174,23 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
             return True
 
         return super().eventFilter(obj, e)
+
+    def _scale(self):
+        """Provide scaling factor"""
+        dlg = ScaleDialog(self._xFac, self._yFac, self)
+        dlg.show()
+        result = dlg.exec_() # Run the dialog event loop
+        if result:
+            self._xFac = dlg.xFac()
+            self._yFac = dlg.yFac()
+            if self._nsAction.isChecked():
+                self.drawProfilesNorthSouth()
+            elif self._snAction.isChecked():
+                self.drawProfilesSouthNorth()
+            elif self._weAction.isChecked():
+                self.drawProfilesWestEast()
+            elif self._ewAction.isChecked():
+                self.drawProfilesEastWest()
 
     def _exportToFile(self):
         """Export drawing to file"""
@@ -277,7 +302,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
             self.showMessage)
         pac = builder.getProfilesAndConnectors(features)
         painter = ProfilePainter(self.scene, self.view.width(), self.view.height())
-        painter.applyScale(None, None)
+        painter.applyScale(self._xFac, self._yFac)
         painter.paint(pac, len(pac) == 1)
         self.view.resetTransform()
         self.view.setSceneRect(self.scene.itemsBoundingRect())
