@@ -43,3 +43,4 @@ class Config:
             self.showMessage("Error", "Failed to parse YML: {0}".format(pe))
         except FileNotFoundError:
             self.showMessage("Error", "File {0} was not found.".format(fileName))
+        return None
