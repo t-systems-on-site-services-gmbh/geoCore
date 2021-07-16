@@ -46,7 +46,7 @@ class ProfileBuilder:
 
     def _getSchichtdaten(self, profileId):
         """Get the Schichtdaten corresponding to given drilling profile"""
-        qex = QgsExpression(QgsExpression().createFieldEqualityExpression("ID", profileId))
+        qex = QgsExpression(QgsExpression().createFieldEqualityExpression(self.config.settings["dataId"], profileId))
         qfr = QgsFeatureRequest(qex)
         layerSchichtdaten = QgsProject().instance().mapLayersByName(self.nameLayerSchichtdaten)
 
@@ -95,7 +95,7 @@ class ProfileBuilder:
                 xp = xp + distance
                 yp = f.attribute(self.config.settings["zCoord"]) * 100 # convert to cm
 
-                profiles.append(self._getProfile(f.attribute("id"), xp * 100, yp))
+                profiles.append(self._getProfile(f.attribute(self.config.settings["boreholeId"]), xp * 100, yp))
 
                 x = f.attribute(self.config.settings["xCoord"])
                 y = f.attribute(self.config.settings["yCoord"])
