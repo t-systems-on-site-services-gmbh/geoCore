@@ -20,6 +20,7 @@
 """
 
 import re
+import os
 from math import sqrt
 from sys import maxsize
 from qgis.core import Qgis, QgsExpression, QgsFeatureRequest, QgsProject
@@ -157,13 +158,31 @@ class ProfileBuilder:
             infoList.append(self._cfgLookup(ggDict, 'longname', errorValue=gg))
             for k in kg:
                 kgDict = self._cfgLookup(descriptions, k)
-                infoList.append(self._cfgLookup(kgDict, 'longname', errorValue=k))
+
+                infoList.append(
+                    self._cfgLookup(kgDict, 'longname', errorValue=k)
+                )
+
+                texture = self._cfgLookup(
+                    kgDict,
+                    'texture',
+                    showError=False
+                )
+
+                if texture and not pb.texture:
+                    if not os.path.isabs(texture):
+                        texture = os.path.join(
+                            self.config.myDir,
+                            "config",
+                            "geoCore",
+                            texture
+                        )
+                    pb.texture = os.path.normpath(texture)           
             infoList.append(l[self.config.settings["comment"]])
             infoList.append(self._cfgLookup(color, 'longname'))
             pb.info = ", ".join([i for i in infoList if (i is not None) and not isinstance(i, QVariant)])
 
             profile.boxes.append(pb)
-
             # QgsMessageLog.logMessage("Profile {} - petro: {}({}), width: {}, height: {}, x: {}, y: {}, info: {}"
             #     .format(profileId, gg, kg, pb.width, pb.height, x, y, pb.info), level=Qgis.Info)
             y = y - pb.height

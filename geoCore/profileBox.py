@@ -19,7 +19,8 @@
     along with geoCore.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from qgis.PyQt.QtGui import QBrush, QColor, QPen
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtGui import QBrush, QColor, QPen, QPixmap
 #from qgis.core import Qgis, QgsMessageLog
 
 class ProfileBox:
@@ -45,12 +46,41 @@ class ProfileBox:
     def setYFac(self, yFac):
         """Set scaling factor for y-dimension"""
         self._yFac = yFac
-
     def paint(self, scene, xpos):
-        """Paint box onto scene"""
+        """Paint the colored box and its optional SVG texture."""
         pen, brush = self._getPenAndBrush()
         x, y, w, h = self._getPosAndDims(xpos)
+
+        # First paint the background color.
         scene.addRect(x, y, w, h, pen, brush)
+
+        # Paint the SVG texture over the background color.
+        if self.texture:
+            texturePixmap = QPixmap(self.texture)
+
+            if not texturePixmap.isNull():
+                textureBrush = QBrush(texturePixmap)
+                noPen = QPen(Qt.NoPen)
+
+                scene.addRect(
+                    x,
+                    y,
+                    w,
+                    h,
+                    noPen,
+                    textureBrush
+                )
+
+                # Draw the border again so it remains visible.
+                scene.addRect(
+                    x,
+                    y,
+                    w,
+                    h,
+                    pen,
+                    QBrush(Qt.NoBrush)
+                )
+
 
     def paintDescription(self, scene, xpos):
         """Paint description"""
