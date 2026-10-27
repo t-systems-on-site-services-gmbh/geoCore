@@ -177,7 +177,7 @@ class ProfileBuilder:
                             "geoCore",
                             texture
                         )
-                    pb.texture = os.path.normpath(texture)           
+                    pb.texture = os.path.normpath(texture)
             infoList.append(l[self.config.settings["comment"]])
             infoList.append(self._cfgLookup(color, 'longname'))
             pb.info = ", ".join([i for i in infoList if (i is not None) and not isinstance(i, QVariant)])
