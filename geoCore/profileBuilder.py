@@ -165,7 +165,7 @@ class ProfileBuilder:
 
                 if texture and not pb.texture:
                     if not os.path.isabs(texture):
-                        texture = os.path.join( self.config.myDir,"config", "geoCore",texture)
+                        texture = os.path.join(self.config.myDir, "config", "geoCore", texture)
                     pb.texture = os.path.normpath(texture)
             infoList.append(l[self.config.settings["comment"]])
             infoList.append(self._cfgLookup(color, 'longname'))
