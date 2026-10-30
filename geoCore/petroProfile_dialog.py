@@ -273,33 +273,31 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
     def drawProfilesNorthSouth(self):
         """Draw profiles in direction from north to south"""
         self._nsAction.setChecked(True)
-        crit = lambda f: -f.attribute('ycoord') # north -> south
-        self._drawProfiles(crit)
+        self._drawProfiles("yCoord", -1) # north -> south
 
     def drawProfilesSouthNorth(self):
         """Draw profiles in direction from south to north"""
         self._snAction.setChecked(True)
-        crit = lambda f: f.attribute('ycoord') # south -> north
-        self._drawProfiles(crit)
+        self._drawProfiles("yCoord", 1) # south -> north
 
     def drawProfilesWestEast(self):
         """Draw profiles in direction from west to east"""
         self._weAction.setChecked(True)
-        crit = lambda f: f.attribute('xcoord') # west -> east
-        self._drawProfiles(crit)
+        self._drawProfiles("xCoord", 1) # west -> east
 
     def drawProfilesEastWest(self):
         """Draw profiles in direction from east to west"""
         self._ewAction.setChecked(True)
-        crit = lambda f: -f.attribute('xcoord') # east -> west
-        self._drawProfiles(crit)
+        self._drawProfiles("xCoord", -1) # east -> west
 
-    def _drawProfiles(self, sortCrit):
+    def _drawProfiles(self, coordinateKey, sortDirection):
         """Draw the selected drilling profiles"""
         self.scene.clear()
-        features = self._getSortedDrillingPositions(sortCrit)
         builder = ProfileBuilder(self.iface.activeLayer().name(),
             self.showMessage)
+        coordinateField = builder.config.settings[coordinateKey]
+        crit = lambda f: sortDirection * f.attribute(coordinateField)
+        features = self._getSortedDrillingPositions(crit)
         pac = builder.getProfilesAndConnectors(features)
         painter = ProfilePainter(self.scene, self.view.width(), self.view.height())
         painter.applyScale(self._xFac, self._yFac)
