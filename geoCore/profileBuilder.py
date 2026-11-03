@@ -161,7 +161,7 @@ class ProfileBuilder:
 
                 infoList.append(self._cfgLookup(kgDict, 'longname', errorValue=k))
 
-                texture = self._cfgLookup( kgDict,'texture',showError=False)
+                texture = self._cfgLookup(kgDict, 'texture', showError=False)
 
                 if texture and not pb.texture:
                     if not os.path.isabs(texture):
