@@ -38,10 +38,10 @@ class Config:
         """Return a YML file's contents.
         The file is assumed to be encoded in utf-8"""
         try:
-            with open(fileName, "r", encoding="utf-8") as f:
-                return yaml.safe_load(f)
-        except yaml.parser.ParserError as pe:
-            self.showMessage("Error", "Failed to parse YML: {0}".format(pe))
+            with open(fileName, "r", encoding="utf-8") as file:
+                return yaml.safe_load(file)
+        except yaml.parser.ParserError as pErr:
+            self.showMessage("Error", "Failed to parse YML: {0}".format(pErr))
         except FileNotFoundError:
             self.showMessage("Error", "File {0} was not found.".format(fileName))
         return None

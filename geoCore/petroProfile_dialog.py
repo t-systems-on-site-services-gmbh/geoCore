@@ -204,7 +204,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         """Get QSvgGenerator as paint device"""
         generator = QSvgGenerator()
         generator.setDescription(
-            "This SVG was generated with the geoCore " "plugin of QGIS, written by T-Systems on site services GmbH"
+            "This SVG was generated with the geoCore plugin of QGIS, written by T-Systems on site services GmbH"
         )
         generator.setTitle("geoCore")
         generator.setSize(sourceRect.size().toSize())
