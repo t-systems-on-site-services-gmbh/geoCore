@@ -39,7 +39,7 @@ load-plugins=
 # no Warning level messages displayed, use"--disable=all --enable=classes
 # --disable=W"
 # see http://stackoverflow.com/questions/21487025/pylint-locally-defined-disables-still-give-warnings-how-to-suppress-them
-disable=locally-disabled,C0103,E0401,no-name-in-module,no-member,relative-beyond-top-level,too-few-public-methods,super-with-arguments
+disable=locally-disabled,E0401,no-name-in-module,no-member,relative-beyond-top-level,too-few-public-methods,super-with-arguments,C0209,C3001,R1728
 
 
 [REPORTS]
@@ -249,7 +249,7 @@ max-statements=50
 max-parents=7
 
 # Maximum number of attributes for a class (see R0902).
-max-attributes=715
+max-attributes=15
 
 # Minimum number of public methods for a class (see R0903).
 min-public-methods=2
