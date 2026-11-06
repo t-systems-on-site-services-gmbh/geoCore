@@ -1,27 +1,29 @@
-""" Module containing the class ProfileBox
+"""Module containing the class ProfileBox
 
-    geoCore - a QGIS plugin for drawing drilling profiles
-    Copyright (C) 2019, 2020  Gerrit Bette, T-Systems on site services GmbH
+geoCore - a QGIS plugin for drawing drilling profiles
+Copyright (C) 2019, 2020  Gerrit Bette, T-Systems on site services GmbH
 
-    This file is part of geoCore.
+This file is part of geoCore.
 
-    geoCore is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+geoCore is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    geoCore is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+geoCore is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with geoCore.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with geoCore.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QBrush, QColor, QPen, QPixmap
-#from qgis.core import Qgis, QgsMessageLog
+
+# from qgis.core import Qgis, QgsMessageLog
+
 
 class ProfileBox:
     """ProfileBox represents one layer of a petrographic drilling profile.
@@ -36,10 +38,10 @@ class ProfileBox:
         self.width = 0.0
         self.height = 0.0
         self.depth = 0.0
-        self.name = ''
-        self.info = ''
-        self.color = ''
-        self.texture = ''
+        self.name = ""
+        self.info = ""
+        self.color = ""
+        self.texture = ""
         self.isFirst = layer == 1
         self.isLast = False
 
@@ -63,6 +65,7 @@ class ProfileBox:
                 scene.addRect(x, y, w, h, noPen, textureBrush)
                 # Draw the border again so it remains visible.
                 scene.addRect(x, y, w, h, pen, noBrush)
+
     def paintDescription(self, scene, xpos):
         """Paint description"""
         width = self._paintDepthMark(scene, xpos)
@@ -103,7 +106,7 @@ class ProfileBox:
         """Scales the position (x, y) as well as width and height"""
         # convert dimensions from cm to mm
         x = xpos * 10
-        y = self.y * self._yFac * -10 # direction of y-axis is top down, point (0,0) is in the upper left
+        y = self.y * self._yFac * -10  # direction of y-axis is top down, point (0,0) is in the upper left
         w = self.width * 10
         h = self.height * self._yFac * 10
         return x, y, w, h
