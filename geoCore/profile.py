@@ -1,26 +1,27 @@
-""" Module containing the class Profile
+"""Module containing the class Profile
 
-    geoCore - a QGIS plugin for drawing drilling profiles
-    Copyright (C) 2019 - 2021  Gerrit Bette, T-Systems on site services GmbH
+geoCore - a QGIS plugin for drawing drilling profiles
+Copyright (C) 2019 - 2021  Gerrit Bette, T-Systems on site services GmbH
 
-    This file is part of geoCore.
+This file is part of geoCore.
 
-    geoCore is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+geoCore is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    geoCore is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+geoCore is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with geoCore.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with geoCore.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from functools import reduce
 from .otbp import Otbp
+
 
 class Profile(Otbp):
     """Profile represents a petrographic drilling profile.
@@ -30,8 +31,8 @@ class Profile(Otbp):
         """Initialize the profile"""
         super().__init__()
         self.x = 0.0
-        self.y = 0.0 # in cm
-        self.margin = 1 # margin for description
+        self.y = 0.0  # in cm
+        self.margin = 1  # margin for description
         self.name = name
         self.boxes = []
 
@@ -60,7 +61,7 @@ class Profile(Otbp):
         """Paint legend explaining the width of the individual
         layers/boxes below the profile"""
         yBottom = self.y - self.height()
-        yPos = (yBottom * self._yFac - self.margin) * -10 # cm to mm
+        yPos = (yBottom * self._yFac - self.margin) * -10  # cm to mm
         for b in self.boxes:
             xPos = (self.x * self._xFac + b.width) * 10
             scene.addLine(xPos, yPos, xPos, yPos + 20)
@@ -88,9 +89,9 @@ class Profile(Otbp):
         if len(self.boxes) == 0:
             return
 
-        n = scene.addText("{}".format(self.name)) # name might be an int
+        n = scene.addText("{}".format(self.name))  # name might be an int
         n.adjustSize()
-        n.setX(self.x * self._xFac * 10) # cm to mm
+        n.setX(self.x * self._xFac * 10)  # cm to mm
         n.setY(-self.y * self._yFac * 10 - n.boundingRect().height())
 
     def _paintLeftDescription(self, scene):
@@ -101,8 +102,8 @@ class Profile(Otbp):
         yTop = self.y
         top = scene.addText("{:.2f} m".format(float(yTop) / 100))
         top.adjustSize()
-        xpos = (self.x * self._xFac * 10) - top.textWidth() - (self.margin * 10) # cm to mm
-        ypos = -yTop * self._yFac * 10 # cm to mm
+        xpos = (self.x * self._xFac * 10) - top.textWidth() - (self.margin * 10)  # cm to mm
+        ypos = -yTop * self._yFac * 10  # cm to mm
         top.setX(xpos)
         top.setY(ypos - 2)
         scene.addLine(xpos, ypos, 10 * (self.x * self._xFac - self.margin), ypos)
@@ -110,8 +111,8 @@ class Profile(Otbp):
         yBottom = self.y - self.height()
         bottom = scene.addText("{:.2f} m".format(float(yBottom) / 100))
         bottom.adjustSize()
-        xpos = (self.x * self._xFac * 10) - bottom.textWidth() - (self.margin * 10) # cm to mm
-        ypos = -yBottom * self._yFac * 10 - (bottom.boundingRect().height() - 2) # cm to mm
+        xpos = (self.x * self._xFac * 10) - bottom.textWidth() - (self.margin * 10)  # cm to mm
+        ypos = -yBottom * self._yFac * 10 - (bottom.boundingRect().height() - 2)  # cm to mm
         bottom.setX(xpos)
         bottom.setY(ypos)
         ypos = -yBottom * self._yFac * 10

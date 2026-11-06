@@ -26,6 +26,7 @@
         git sha              : $Format:%H$
  *************************************************************/
 """
+
 import os
 from pathlib import Path
 
@@ -44,8 +45,7 @@ from .scale_dialog import ScaleDialog
 
 # This loads your .ui file so that PyQt can populate your plugin
 # with the elements from Qt Designer
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'petroProfile_dialog_base.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), "petroProfile_dialog_base.ui"))
 
 
 class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
@@ -161,7 +161,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         delta = e.angleDelta()
         if delta.isNull():
             return
-        s =  1.0
+        s = 1.0
         if delta.y() > 0:
             s = 1.15
         else:
@@ -179,7 +179,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         """Provide scaling factor"""
         dlg = ScaleDialog(self._xFac, self._yFac, self)
         dlg.show()
-        result = dlg.exec_() # Run the dialog event loop
+        result = dlg.exec_()  # Run the dialog event loop
         if result:
             self._xFac = dlg.xFac()
             self._yFac = dlg.yFac()
@@ -203,8 +203,9 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
     def _svgPaintDevice(self, name, sourceRect, targetRect):
         """Get QSvgGenerator as paint device"""
         generator = QSvgGenerator()
-        generator.setDescription("This SVG was generated with the geoCore "
-            "plugin of QGIS, written by T-Systems on site services GmbH")
+        generator.setDescription(
+            "This SVG was generated with the geoCore " "plugin of QGIS, written by T-Systems on site services GmbH"
+        )
         generator.setTitle("geoCore")
         generator.setSize(sourceRect.size().toSize())
         generator.setViewBox(targetRect)
@@ -213,8 +214,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def _imgPaintDevice(self, sourceRect):
         """Get QImage as paint device"""
-        img = QImage(sourceRect.width(), sourceRect.height(),
-            QImage.Format_ARGB32)
+        img = QImage(sourceRect.width(), sourceRect.height(), QImage.Format_ARGB32)
         img.fill(QColor("transparent"))
         return img
 
@@ -243,19 +243,21 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
             painter.setRenderHint(QPainter.Antialiasing)
             self.scene.render(painter, targetRect, sourceRect)
             painter.end()
-            if hasattr(pd, 'save') and callable(pd.save):
+            if hasattr(pd, "save") and callable(pd.save):
                 pd.save(name)
-            QgsMessageLog.logMessage("exported to {}".format(name),
-                level=Qgis.Info)
+            QgsMessageLog.logMessage("exported to {}".format(name), level=Qgis.Info)
         except IOError:
-            self.showMessage("Error", "Failed to export to {}".format(name),
-                Qgis.Critical)
+            self.showMessage("Error", "Failed to export to {}".format(name), Qgis.Critical)
 
     def _getFilename(self):
         """Get file name via file dialog"""
         home = str(Path.home())
-        name = QFileDialog.getSaveFileName(self, "Export to file", home,
-            "Vector graphics (*.svg);;Images (*.png *.jpg)")
+        name = QFileDialog.getSaveFileName(
+            self,
+            "Export to file",
+            home,
+            "Vector graphics (*.svg);;Images (*.png *.jpg)",
+        )
 
         if (name is None) or (len(name[0]) == 0):
             return None
@@ -273,33 +275,32 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
     def drawProfilesNorthSouth(self):
         """Draw profiles in direction from north to south"""
         self._nsAction.setChecked(True)
-        crit = lambda f: -f.attribute('ycoord') # north -> south
+        crit = lambda f: -f.attribute("ycoord")  # north -> south
         self._drawProfiles(crit)
 
     def drawProfilesSouthNorth(self):
         """Draw profiles in direction from south to north"""
         self._snAction.setChecked(True)
-        crit = lambda f: f.attribute('ycoord') # south -> north
+        crit = lambda f: f.attribute("ycoord")  # south -> north
         self._drawProfiles(crit)
 
     def drawProfilesWestEast(self):
         """Draw profiles in direction from west to east"""
         self._weAction.setChecked(True)
-        crit = lambda f: f.attribute('xcoord') # west -> east
+        crit = lambda f: f.attribute("xcoord")  # west -> east
         self._drawProfiles(crit)
 
     def drawProfilesEastWest(self):
         """Draw profiles in direction from east to west"""
         self._ewAction.setChecked(True)
-        crit = lambda f: -f.attribute('xcoord') # east -> west
+        crit = lambda f: -f.attribute("xcoord")  # east -> west
         self._drawProfiles(crit)
 
     def _drawProfiles(self, sortCrit):
         """Draw the selected drilling profiles"""
         self.scene.clear()
         features = self._getSortedDrillingPositions(sortCrit)
-        builder = ProfileBuilder(self.iface.activeLayer().name(),
-            self.showMessage)
+        builder = ProfileBuilder(self.iface.activeLayer().name(), self.showMessage)
         pac = builder.getProfilesAndConnectors(features)
         painter = ProfilePainter(self.scene, self.view.width(), self.view.height())
         painter.applyScale(self._xFac, self._yFac)
@@ -314,7 +315,9 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def _aboutPlugin(self):
         """Show the about dialog"""
-        QMessageBox.about(self, "About",
+        QMessageBox.about(
+            self,
+            "About",
             """<h1>geoCore</h1>
             <p>
             Copyright (C) 2019-2021  Gerrit Bette, T-Systems on site services GmbH<br>
@@ -332,7 +335,8 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
             <a href="https://github.com/t-systems-on-site-services-gmbh/geoCore/blob/master/geoCore/help/usage.md">
             Manual</a>
             </p>
-            """)
+            """,
+        )
 
     def _openManual(self):
         """Open the user manual"""

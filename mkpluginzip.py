@@ -8,11 +8,14 @@ import os
 
 ZIPNAME = "geoCore.zip"
 PYCACHE = "__pycache__"
-excludes = [ "geoCore\\makeres.bat", "geoCore\\pylintrc"]
+excludes = ["geoCore\\makeres.bat", "geoCore\\pylintrc"]
 additional = ["LICENSE", "README.md"]
 
-files = [f for f in glob.glob("geoCore/**/*.*", recursive=True)
-    if f not in excludes and PYCACHE not in f]
+files = [
+    f
+    for f in glob.glob("geoCore/**/*.*", recursive=True)
+    if f not in excludes and PYCACHE not in f
+]
 
 if os.path.exists(ZIPNAME):
     os.remove(ZIPNAME)
@@ -21,4 +24,3 @@ with zipfile.ZipFile(ZIPNAME, "x") as myzip:
         myzip.write(f)
     for f in additional:
         myzip.write(f, "geoCore\\" + f)
-        

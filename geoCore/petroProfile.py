@@ -26,6 +26,7 @@
  ***************************************************************************************/
 
 """
+
 import os.path
 
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
@@ -34,8 +35,10 @@ from qgis.PyQt.QtWidgets import QAction
 
 # Initialize Qt resources from file resources.py
 from .resources import *
+
 # Import the code for the dialog
 from .petroProfile_dialog import PetroProfileDialog
+
 
 class PetroProfile:
     """QGIS Plugin Implementation."""
@@ -53,11 +56,8 @@ class PetroProfile:
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
         # initialize locale
-        locale = QSettings().value('locale/userLocale')[0:2]
-        locale_path = os.path.join(
-            self.plugin_dir,
-            'i18n',
-            'PetroProfile_{}.qm'.format(locale))
+        locale = QSettings().value("locale/userLocale")[0:2]
+        locale_path = os.path.join(self.plugin_dir, "i18n", "PetroProfile_{}.qm".format(locale))
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()
@@ -66,7 +66,7 @@ class PetroProfile:
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&geoCore')
+        self.menu = self.tr("&geoCore")
 
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
@@ -86,20 +86,20 @@ class PetroProfile:
         :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('geoCore', message)
-
+        return QCoreApplication.translate("geoCore", message)
 
     def add_action(
-            self,
-            icon_path,
-            text,
-            callback,
-            enabled_flag=True,
-            add_to_menu=True,
-            add_to_toolbar=True,
-            status_tip=None,
-            whats_this=None,
-            parent=None):
+        self,
+        icon_path,
+        text,
+        callback,
+        enabled_flag=True,
+        add_to_menu=True,
+        add_to_toolbar=True,
+        status_tip=None,
+        whats_this=None,
+        parent=None,
+    ):
         """Add a toolbar icon to the toolbar.
 
         :param icon_path: Path to the icon for this action. Can be a resource
@@ -155,9 +155,7 @@ class PetroProfile:
             self.iface.addToolBarIcon(action)
 
         if add_to_menu:
-            self.iface.addPluginToMenu(
-                self.menu,
-                action)
+            self.iface.addPluginToMenu(self.menu, action)
 
         self.actions.append(action)
 
@@ -166,25 +164,22 @@ class PetroProfile:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/geoCore/icon.png'
+        icon_path = ":/plugins/geoCore/icon.png"
         self.add_action(
             icon_path,
-            text=self.tr(u'Show drilling profile'),
+            text=self.tr("Show drilling profile"),
             callback=self.run,
-            parent=self.iface.mainWindow())
+            parent=self.iface.mainWindow(),
+        )
 
         # will be set False in run()
         self.first_start = True
 
-
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
-            self.iface.removePluginMenu(
-                self.tr(u'&geoCore'),
-                action)
+            self.iface.removePluginMenu(self.tr("&geoCore"), action)
             self.iface.removeToolBarIcon(action)
-
 
     def run(self):
         """Run method that performs all the real work"""
