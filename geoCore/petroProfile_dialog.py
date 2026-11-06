@@ -214,7 +214,8 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def _imgPaintDevice(self, sourceRect):
         """Get QImage as paint device"""
-        img = QImage(sourceRect.width(), sourceRect.height(), QImage.Format_ARGB32)
+        size = sourceRect.size().toSize()
+        img = QImage(size.width(), size.height(), QImage.Format_ARGB32)
         img.fill(QColor("transparent"))
         return img
 
