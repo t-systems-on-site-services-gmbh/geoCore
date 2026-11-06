@@ -129,6 +129,7 @@ class ProfileBuilder:
         descriptions = self.config.geoCore['descriptions']
         facies = self.config.geoCore['facies']
         layerAttributes = self._getLayerAttributes(schichtdaten)
+        layerAttributes.sort(key=lambda layer: float(layer[self.config.settings["depthFrom"]]))
         for l in layerAttributes:
             pb = ProfileBox(l[self.config.settings["layerNo"]])
             pb.group = l[self.config.settings["group"]]
