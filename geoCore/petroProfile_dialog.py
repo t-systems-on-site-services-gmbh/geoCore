@@ -71,6 +71,9 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         self.scene = QtWidgets.QGraphicsScene()
         self.view = self.findChild(QtWidgets.QGraphicsView, "graphicsView")
         self.view.setScene(self.scene)
+        self.view.setDragMode(QtWidgets.QGraphicsView.DragMode.ScrollHandDrag)
+        self.view.setResizeAnchor(QtWidgets.QGraphicsView.ViewportAnchor.AnchorUnderMouse)
+        self.view.setTransformationAnchor(QtWidgets.QGraphicsView.ViewportAnchor.AnchorUnderMouse)
         self.view.viewport().installEventFilter(self)
 
     def _setupGeoDirectionActions(self):
@@ -171,6 +174,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
     def eventFilter(self, obj, e):
         """Filter wheel event"""
         if e.type() == QEvent.Type.Wheel:
+            self.wheelEvent(e)
             return True
 
         return super().eventFilter(obj, e)
