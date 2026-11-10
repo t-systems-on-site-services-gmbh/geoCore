@@ -19,4 +19,4 @@ jobs:
         pip install black==25.1.0
     - name: Check formatting with black
       run: |
-        black --check --diff --config geoCore/pyproject.toml .
+        black --check --diff --config pyproject.toml .
