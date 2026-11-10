@@ -234,7 +234,11 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def _exportWithPainter(self, name):
         """Export as image file"""
+        textItems = [i for i in self.scene.items() if isinstance(i, QtWidgets.QGraphicsTextItem)]
+        originalColors = {i: i.defaultTextColor() for i in textItems}
         try:
+            for item in textItems:
+                item.setDefaultTextColor(QColor("black"))
             sourceRect, targetRect = self._getSourceAndTargetRect()
 
             pd = None
@@ -253,6 +257,9 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
             QgsMessageLog.logMessage("exported to {}".format(name), level=Qgis.MessageLevel.Info)
         except IOError:
             self.showMessage("Error", "Failed to export to {}".format(name), Qgis.MessageLevel.Critical)
+        finally:
+            for item, color in originalColors.items():
+                item.setDefaultTextColor(color)
 
     def _getFilename(self):
         """Get file name via file dialog"""
