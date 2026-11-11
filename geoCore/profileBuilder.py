@@ -57,7 +57,6 @@ class ProfileBuilder:
             self.showErrorMessage("Error", "Layer {} not found.".format(self.nameLayerSchichtdaten))
             return None
 
-        # we may want to sort the features by "schichtnr"
         return layerSchichtdaten[0].getFeatures(qfr)
 
     def _getLayerAttributes(self, schichtdaten):
