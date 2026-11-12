@@ -33,9 +33,6 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
-# Initialize Qt resources from file resources.py
-from .resources import *
-
 # Import the code for the dialog
 from .petroProfile_dialog import PetroProfileDialog
 
@@ -102,8 +99,7 @@ class PetroProfile:
     ):
         """Add a toolbar icon to the toolbar.
 
-        :param icon_path: Path to the icon for this action. Can be a resource
-            path (e.g. ':/plugins/foo/bar.png') or a normal file system path.
+        :param icon_path: File system path to the icon for this action.
         :type icon_path: str
 
         :param text: Text that should be shown in menu items for this action.
@@ -164,7 +160,7 @@ class PetroProfile:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ":/plugins/geoCore/icon.png"
+        icon_path = os.path.join(self.plugin_dir, "icon.png")
         self.add_action(
             icon_path,
             text=self.tr("Show drilling profile"),
@@ -194,7 +190,7 @@ class PetroProfile:
         # show the dialog
         self.dlg.show()
         # Run the dialog event loop
-        result = self.dlg.exec_()
+        result = self.dlg.exec()
         # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and

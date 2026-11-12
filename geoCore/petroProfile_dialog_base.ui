@@ -55,12 +55,6 @@
      <property name="horizontalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
-     <property name="dragMode">
-      <enum>QGraphicsView::ScrollHandDrag</enum>
-     </property>
-     <property name="resizeAnchor">
-      <enum>QGraphicsView::AnchorUnderMouse</enum>
-     </property>
     </widget>
    </item>
    <item>
@@ -75,7 +69,6 @@
    </item>
   </layout>
  </widget>
- <resources/>
  <connections>
   <connection>
    <sender>button_box</sender>

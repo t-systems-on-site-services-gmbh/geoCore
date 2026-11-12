@@ -114,7 +114,7 @@ class ProfileBuilder:
             self.showMessage(
                 "Info",
                 "Select at least one feature or activate the correct layer.",
-                Qgis.Info,
+                Qgis.MessageLevel.Info,
             )
 
         connectors = self._connectProfiles(actualProfiles, actualFeatures)
@@ -155,7 +155,7 @@ class ProfileBuilder:
                 self.showMessage(
                     "Warning",
                     "Missing main group in petrography: {}".format(l[self.config.settings["petrography"]]),
-                    Qgis.Warning,
+                    Qgis.MessageLevel.Warning,
                 )
 
             color = self._cfgLookup(colors, l[self.config.settings["color"]])
@@ -201,7 +201,7 @@ class ProfileBuilder:
                 return dictionary[key]
         except KeyError:
             if showError:
-                self.showMessage("Info", "Key {} not found in config.".format(key), Qgis.Info)
+                self.showMessage("Info", "Key {} not found in config.".format(key), Qgis.MessageLevel.Info)
         return errorValue
 
     def _connectProfiles(self, profiles, features):
@@ -323,4 +323,4 @@ class ProfileBuilder:
 
     def showErrorMessage(self, title, message):
         """Display an error message"""
-        self.showMessage(title, message, Qgis.Critical)
+        self.showMessage(title, message, Qgis.MessageLevel.Critical)

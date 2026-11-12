@@ -60,8 +60,8 @@ class ProfileBox:
             texturePixmap = QPixmap(self.texture)
             if not texturePixmap.isNull():
                 textureBrush = QBrush(texturePixmap)
-                noBrush = QBrush(Qt.NoBrush)
-                noPen = QPen(Qt.NoPen)
+                noBrush = QBrush(Qt.BrushStyle.NoBrush)
+                noPen = QPen(Qt.PenStyle.NoPen)
                 scene.addRect(x, y, w, h, noPen, textureBrush)
                 # Draw the border again so it remains visible.
                 scene.addRect(x, y, w, h, pen, noBrush)
