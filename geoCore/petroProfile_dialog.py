@@ -34,9 +34,9 @@ from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtWidgets import QAction, QActionGroup, QMenu
 from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
-from qgis.PyQt.QtGui import QPainter, QImage, QColor
+from qgis.PyQt.QtGui import QPainter, QImage, QColor, QDesktopServices
 from qgis.PyQt.QtSvg import QSvgGenerator
-from qgis.PyQt.QtCore import QRectF, QEvent
+from qgis.PyQt.QtCore import QRectF, QEvent, QUrl
 from qgis.core import Qgis, QgsMessageLog
 
 from .profileBuilder import ProfileBuilder
@@ -309,7 +309,8 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         self.scene.clear()
         builder = ProfileBuilder(self.iface.activeLayer().name(), self.showMessage)
         coordinateField = builder.config.settings[coordinateKey]
-        crit = lambda f: sortDirection * f.attribute(coordinateField)
+        def crit(f):
+            return sortDirection * f.attribute(coordinateField)
         features = self._getSortedDrillingPositions(crit)
         pac = builder.getProfilesAndConnectors(features)
         painter = ProfilePainter(self.scene, self.view.width(), self.view.height())
@@ -350,11 +351,24 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         )
 
     def _openManual(self):
-        """Open the user manual"""
+        """Open the user manual in the default browser."""
         script_dir = os.path.dirname(__file__)
-        rel_path = "help/usage.html"
-        abs_file_path = os.path.join(script_dir, rel_path)
-        os.system("start " + abs_file_path)
+        abs_file_path = os.path.join(script_dir, "help", "usage.html")
+
+        if not os.path.isfile(abs_file_path):
+            QMessageBox.warning(
+                self,
+                "Manual not found",
+                f"Manual file not found:\n{abs_file_path}"
+            )
+            return
+
+        if not QDesktopServices.openUrl(QUrl.fromLocalFile(abs_file_path)):
+            QMessageBox.warning(
+                self,
+                "Error",
+                "Could not open the user manual."
+            )
 
     def showMessage(self, title, message, level):
         """Display a message in the main window's messageBar"""

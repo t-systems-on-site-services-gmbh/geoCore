@@ -138,15 +138,15 @@ class ProfileBuilder:
         facies = self.config.geoCore["facies"]
         layerAttributes = self._getLayerAttributes(schichtdaten)
         layerAttributes.sort(key=lambda layer: float(layer[self.config.settings["depthFrom"]]))
-        for l in layerAttributes:
-            pb = ProfileBox(l[self.config.settings["layerNo"]])
-            pb.group = l[self.config.settings["group"]]
-            pb.isLast = l[self.config.settings["layerNo"]] == len(layerAttributes)
+        for layer in layerAttributes:
+            pb = ProfileBox(layer[self.config.settings["layerNo"]])
+            pb.group = layer[self.config.settings["group"]]
+            pb.isLast = layer[self.config.settings["layerNo"]] == len(layerAttributes)
             pb.y = y
-            pb.height = l[self.config.settings["depthTo"]] - l[self.config.settings["depthFrom"]]
-            pb.depth = l[self.config.settings["depthTo"]]
+            pb.height = layer[self.config.settings["depthTo"]] - layer[self.config.settings["depthFrom"]]
+            pb.depth = layer[self.config.settings["depthTo"]]
 
-            gg, kg = self._splitPetrographie(l[self.config.settings["petrography"]])
+            gg, kg = self._splitPetrographie(layer[self.config.settings["petrography"]])
             pb.name = gg
             try:
                 pb.width = boxes[gg]["width"]
@@ -154,11 +154,11 @@ class ProfileBuilder:
                 pb.width = 0.1
                 self.showMessage(
                     "Warning",
-                    "Missing main group in petrography: {}".format(l[self.config.settings["petrography"]]),
+                    "Missing main group in petrography: {}".format(layer[self.config.settings["petrography"]]),
                     Qgis.MessageLevel.Warning,
                 )
 
-            color = self._cfgLookup(colors, l[self.config.settings["color"]])
+            color = self._cfgLookup(colors, layer[self.config.settings["color"]])
             pb.color = self._cfgLookup(color, "code")
             pb.texture = self._cfgLookup(color, "texture", showError=False)
 
@@ -167,8 +167,8 @@ class ProfileBuilder:
             infoList.append(
                 self._cfgLookup(
                     facies,
-                    l[self.config.settings["facies"]],
-                    errorValue=l[self.config.settings["facies"]],
+                    layer[self.config.settings["facies"]],
+                    errorValue=layer[self.config.settings["facies"]],
                 )
             )
             infoList.append(self._cfgLookup(ggDict, "longname", errorValue=gg))
@@ -183,7 +183,7 @@ class ProfileBuilder:
                     if not os.path.isabs(texture):
                         texture = os.path.join(self.config.myDir, "config", "geoCore", texture)
                     pb.texture = os.path.normpath(texture)
-            infoList.append(l[self.config.settings["comment"]])
+            infoList.append(layer[self.config.settings["comment"]])
             infoList.append(self._cfgLookup(color, "longname"))
             pb.info = ", ".join([i for i in infoList if (i is not None) and not isinstance(i, QVariant)])
 
@@ -232,31 +232,31 @@ class ProfileBuilder:
         yLeft = pLeft.y
         yRight = pRight.y
 
-        l = 0
-        r = 0
-        while l < len(pLeft.boxes):
-            if lgLeft != pLeft.boxes[l].group:
+        left_idx = 0
+        right_idx = 0
+        while left_idx < len(pLeft.boxes):
+            if lgLeft != pLeft.boxes[left_idx].group:
                 # new connector
                 c = Connector()
                 c.x1 = pLeft.x
                 c.y1 = yLeft
-                c.xOffset = pLeft.boxes[l].width
+                c.xOffset = pLeft.boxes[left_idx].width
 
                 # find the corresponding group on the right side
                 found = False
-                while (r < len(pRight.boxes)) and not found:
-                    if pLeft.boxes[l].group == pRight.boxes[r].group:
+                while (right_idx < len(pRight.boxes)) and not found:
+                    if pLeft.boxes[left_idx].group == pRight.boxes[right_idx].group:
                         c.x2 = pRight.x
                         c.y2 = yRight
                         found = True
                         connectors.append(c)
-                    yRight = yRight - pRight.boxes[r].height
-                    r = r + 1
+                    yRight = yRight - pRight.boxes[right_idx].height
+                    right_idx = right_idx + 1
 
-            lgLeft = pLeft.boxes[l].group
-            yLeft = yLeft - pLeft.boxes[l].height
+            lgLeft = pLeft.boxes[left_idx].group
+            yLeft = yLeft - pLeft.boxes[left_idx].height
 
-            if len(pLeft.boxes) != len(pRight.boxes) and r == len(pRight.boxes):
+            if len(pLeft.boxes) != len(pRight.boxes) and right_idx == len(pRight.boxes):
                 # last profile box on the right but not on the left
                 c = Connector()
                 c.x2 = pRight.x
@@ -264,8 +264,8 @@ class ProfileBuilder:
 
                 found = False
                 ll = len(pLeft.boxes) - 1
-                while ll >= l and not found:
-                    if pLeft.boxes[ll].group == pRight.boxes[r - 1].group:
+                while ll >= left_idx and not found:
+                    if pLeft.boxes[ll].group == pRight.boxes[right_idx - 1].group:
                         c.x1 = pLeft.x
                         c.y1 = pLeft.y - sum([b.height for b in pLeft.boxes[: ll + 1]])
                         c.xOffset = pLeft.boxes[ll].width
@@ -273,25 +273,25 @@ class ProfileBuilder:
                         connectors.append(c)
                     ll = ll - 1
 
-            if l == len(pLeft.boxes) - 1:
+            if left_idx == len(pLeft.boxes) - 1:
                 # last profile box on the left
                 c = Connector()
                 c.x1 = pLeft.x
                 c.y1 = pLeft.y - pLeft.height()
-                c.xOffset = pLeft.boxes[l].width
+                c.xOffset = pLeft.boxes[left_idx].width
 
                 # connect to last corresponding group on the right
                 found = False
                 rr = len(pRight.boxes) - 1
-                while (rr >= r - 1) and not found:
-                    if pLeft.boxes[l].group == pRight.boxes[rr].group:
+                while (rr >= right_idx - 1) and not found:
+                    if pLeft.boxes[left_idx].group == pRight.boxes[rr].group:
                         c.x2 = pRight.x
                         c.y2 = pRight.y - sum([b.height for b in pRight.boxes[: rr + 1]])
                         found = True
                         connectors.append(c)
                     rr = rr - 1
 
-            l = l + 1
+            left_idx = left_idx + 1
 
         return connectors
 
