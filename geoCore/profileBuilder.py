@@ -1,28 +1,30 @@
-""" Module to construct profiles
+"""Module to construct profiles
 
-    geoCore - a QGIS plugin for drawing drilling profiles
-    Copyright (C) 2019 - 2021  Gerrit Bette, T-Systems on site services GmbH
+geoCore - a QGIS plugin for drawing drilling profiles
+Copyright (C) 2019 - 2021  Gerrit Bette, T-Systems on site services GmbH
 
-    This file is part of geoCore.
+This file is part of geoCore.
 
-    geoCore is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+geoCore is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    geoCore is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+geoCore is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with geoCore.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with geoCore.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import re
+import os
 from math import sqrt
 from sys import maxsize
 from qgis.core import Qgis, QgsExpression, QgsFeatureRequest, QgsProject
+
 # from qgis.core import QgsMessageLog
 from qgis.PyQt.QtCore import QVariant
 
@@ -32,6 +34,7 @@ from .profileBox import ProfileBox
 from .connector import Connector
 from .orientation import Orientation
 from .gauge import Gauge
+
 
 class ProfileBuilder:
     """This class constructs the drilling profiles"""
@@ -46,7 +49,7 @@ class ProfileBuilder:
 
     def _getSchichtdaten(self, profileId):
         """Get the Schichtdaten corresponding to given drilling profile"""
-        qex = QgsExpression(QgsExpression().createFieldEqualityExpression("ID", profileId))
+        qex = QgsExpression(QgsExpression().createFieldEqualityExpression(self.config.settings["dataId"], profileId))
         qfr = QgsFeatureRequest(qex)
         layerSchichtdaten = QgsProject().instance().mapLayersByName(self.nameLayerSchichtdaten)
 
@@ -54,7 +57,6 @@ class ProfileBuilder:
             self.showErrorMessage("Error", "Layer {} not found.".format(self.nameLayerSchichtdaten))
             return None
 
-        # we may want to sort the features by "schichtnr"
         return layerSchichtdaten[0].getFeatures(qfr)
 
     def _getLayerAttributes(self, schichtdaten):
@@ -69,14 +71,14 @@ class ProfileBuilder:
         if not isinstance(petro, str):
             return (None, [])
         m = self.petroPattern.match(petro)
-        gg = m.group(1) # Großgruppe
+        gg = m.group(1)  # Großgruppe
         kg = []
-        k = m.group(2) # Kleingruppe
+        k = m.group(2)  # Kleingruppe
         if k is not None:
             # chop off parantheses
             k = k[1:-1]
             # and make a list of it
-            kg = [s.strip() for s in k.split(",") if not (s.isspace() or (s == ''))]
+            kg = [s.strip() for s in k.split(",") if not (s.isspace() or (s == ""))]
         return (gg, kg)
 
     def getProfilesAndConnectors(self, features):
@@ -90,12 +92,14 @@ class ProfileBuilder:
                 # The x-position (xp) of the drilling profile is the distance
                 # to the previous coordinate. We start with xp = 0.
                 # The y-position of the profile is the elevation (z-coordinate).
-                distance = sqrt((f.attribute(self.config.settings["xCoord"]) - x)**2
-                            + (f.attribute(self.config.settings["yCoord"]) - y)**2)
+                distance = sqrt(
+                    (f.attribute(self.config.settings["xCoord"]) - x) ** 2
+                    + (f.attribute(self.config.settings["yCoord"]) - y) ** 2
+                )
                 xp = xp + distance
-                yp = f.attribute(self.config.settings["zCoord"]) * 100 # convert to cm
+                yp = f.attribute(self.config.settings["zCoord"]) * 100  # convert to cm
 
-                profiles.append(self._getProfile(f.attribute("id"), xp * 100, yp))
+                profiles.append(self._getProfile(f.attribute(self.config.settings["boreholeId"]), xp * 100, yp))
 
                 x = f.attribute(self.config.settings["xCoord"])
                 y = f.attribute(self.config.settings["yCoord"])
@@ -107,7 +111,11 @@ class ProfileBuilder:
                 actualProfiles.append(p)
                 actualFeatures.append(f)
         if len(actualProfiles) == 0:
-            self.showMessage("Info", "Select at least one feature or activate the correct layer.", Qgis.Info)
+            self.showMessage(
+                "Info",
+                "Select at least one feature or activate the correct layer.",
+                Qgis.MessageLevel.Info,
+            )
 
         connectors = self._connectProfiles(actualProfiles, actualFeatures)
         gauges = self._getGauges(actualProfiles)
@@ -124,46 +132,62 @@ class ProfileBuilder:
         profile.x = x
         profile.y = y
 
-        boxes = self.config.geoCore['boxes']
-        colors = self.config.geoCore['colors']
-        descriptions = self.config.geoCore['descriptions']
-        facies = self.config.geoCore['facies']
+        boxes = self.config.geoCore["boxes"]
+        colors = self.config.geoCore["colors"]
+        descriptions = self.config.geoCore["descriptions"]
+        facies = self.config.geoCore["facies"]
         layerAttributes = self._getLayerAttributes(schichtdaten)
+        layerAttributes.sort(key=lambda layer: float(layer[self.config.settings["depthFrom"]]))
         for l in layerAttributes:
             pb = ProfileBox(l[self.config.settings["layerNo"]])
             pb.group = l[self.config.settings["group"]]
             pb.isLast = l[self.config.settings["layerNo"]] == len(layerAttributes)
             pb.y = y
-            pb.height = l[self.config.settings["depthTo"]]-l[self.config.settings["depthFrom"]]
+            pb.height = l[self.config.settings["depthTo"]] - l[self.config.settings["depthFrom"]]
             pb.depth = l[self.config.settings["depthTo"]]
 
             gg, kg = self._splitPetrographie(l[self.config.settings["petrography"]])
             pb.name = gg
             try:
-                pb.width = boxes[gg]['width']
+                pb.width = boxes[gg]["width"]
             except KeyError:
                 pb.width = 0.1
-                self.showMessage("Warning", "Missing main group in petrography: {}"
-                    .format(l[self.config.settings["petrography"]]), Qgis.Warning)
+                self.showMessage(
+                    "Warning",
+                    "Missing main group in petrography: {}".format(l[self.config.settings["petrography"]]),
+                    Qgis.MessageLevel.Warning,
+                )
 
             color = self._cfgLookup(colors, l[self.config.settings["color"]])
-            pb.color = self._cfgLookup(color, 'code')
-            pb.texture = self._cfgLookup(color, 'texture', showError=False)
+            pb.color = self._cfgLookup(color, "code")
+            pb.texture = self._cfgLookup(color, "texture", showError=False)
 
             ggDict = self._cfgLookup(boxes, gg)
             infoList = []
-            infoList.append(self._cfgLookup(facies, l[self.config.settings["facies"]],
-                errorValue=l[self.config.settings["facies"]]))
-            infoList.append(self._cfgLookup(ggDict, 'longname', errorValue=gg))
+            infoList.append(
+                self._cfgLookup(
+                    facies,
+                    l[self.config.settings["facies"]],
+                    errorValue=l[self.config.settings["facies"]],
+                )
+            )
+            infoList.append(self._cfgLookup(ggDict, "longname", errorValue=gg))
             for k in kg:
                 kgDict = self._cfgLookup(descriptions, k)
-                infoList.append(self._cfgLookup(kgDict, 'longname', errorValue=k))
+
+                infoList.append(self._cfgLookup(kgDict, "longname", errorValue=k))
+
+                texture = self._cfgLookup(kgDict, "texture", showError=False)
+
+                if texture and not pb.texture:
+                    if not os.path.isabs(texture):
+                        texture = os.path.join(self.config.myDir, "config", "geoCore", texture)
+                    pb.texture = os.path.normpath(texture)
             infoList.append(l[self.config.settings["comment"]])
-            infoList.append(self._cfgLookup(color, 'longname'))
+            infoList.append(self._cfgLookup(color, "longname"))
             pb.info = ", ".join([i for i in infoList if (i is not None) and not isinstance(i, QVariant)])
 
             profile.boxes.append(pb)
-
             # QgsMessageLog.logMessage("Profile {} - petro: {}({}), width: {}, height: {}, x: {}, y: {}, info: {}"
             #     .format(profileId, gg, kg, pb.width, pb.height, x, y, pb.info), level=Qgis.Info)
             y = y - pb.height
@@ -177,7 +201,7 @@ class ProfileBuilder:
                 return dictionary[key]
         except KeyError:
             if showError:
-                self.showMessage("Info", "Key {} not found in config.".format(key), Qgis.Info)
+                self.showMessage("Info", "Key {} not found in config.".format(key), Qgis.MessageLevel.Info)
         return errorValue
 
     def _connectProfiles(self, profiles, features):
@@ -187,7 +211,7 @@ class ProfileBuilder:
 
         connectors = []
 
-        i = 1 # we start with the second profile connecting it with the first
+        i = 1  # we start with the second profile connecting it with the first
         minLen = min(len(profiles), len(features))
         while i < minLen:
             cs = self._connectTwoProfiles(profiles[i - 1], profiles[i])
@@ -243,7 +267,7 @@ class ProfileBuilder:
                 while ll >= l and not found:
                     if pLeft.boxes[ll].group == pRight.boxes[r - 1].group:
                         c.x1 = pLeft.x
-                        c.y1 = pLeft.y - sum([b.height for b in pLeft.boxes[:ll+1]])
+                        c.y1 = pLeft.y - sum([b.height for b in pLeft.boxes[: ll + 1]])
                         c.xOffset = pLeft.boxes[ll].width
                         found = True
                         connectors.append(c)
@@ -262,7 +286,7 @@ class ProfileBuilder:
                 while (rr >= r - 1) and not found:
                     if pLeft.boxes[l].group == pRight.boxes[rr].group:
                         c.x2 = pRight.x
-                        c.y2 = pRight.y - sum([b.height for b in pRight.boxes[:rr+1]])
+                        c.y2 = pRight.y - sum([b.height for b in pRight.boxes[: rr + 1]])
                         found = True
                         connectors.append(c)
                     rr = rr - 1
@@ -299,4 +323,4 @@ class ProfileBuilder:
 
     def showErrorMessage(self, title, message):
         """Display an error message"""
-        self.showMessage(title, message, Qgis.Critical)
+        self.showMessage(title, message, Qgis.MessageLevel.Critical)

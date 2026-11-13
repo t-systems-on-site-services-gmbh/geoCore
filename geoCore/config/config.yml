@@ -1,9 +1,11 @@
 # columns in borehole data
+boreholeId: ID
 xCoord: xcoord
 yCoord: ycoord
 zCoord: zcoorddb
 
 # columns in layer data
+dataId: ID
 layerNo: schichtnr
 group: gruppierung
 depthFrom: tiefe von

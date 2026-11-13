@@ -109,7 +109,6 @@
   <tabstop>yFactor</tabstop>
   <tabstop>yAuto</tabstop>
  </tabstops>
- <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
