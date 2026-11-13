@@ -330,7 +330,8 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
             "About",
             """<h1>geoCore</h1>
             <p>
-            Copyright (C) 2019-2021, 2026 Gerrit Bette, Gustavo Pereira Dalboni, Neshat Soleimani, T-Systems on site services GmbH<br>
+            Copyright (C) 2019-2021, 2026 Gerrit Bette, Gustavo Pereira Dalboni, Neshat Soleimani,<br>
+            T-Systems on site services GmbH<br>
             This program comes with ABSOLUTELY NO WARRANTY.
             This is free software, and you are welcome to redistribute it
             under certain conditions; see
