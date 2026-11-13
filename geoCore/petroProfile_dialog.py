@@ -309,8 +309,10 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         self.scene.clear()
         builder = ProfileBuilder(self.iface.activeLayer().name(), self.showMessage)
         coordinateField = builder.config.settings[coordinateKey]
+
         def crit(f):
             return sortDirection * f.attribute(coordinateField)
+
         features = self._getSortedDrillingPositions(crit)
         pac = builder.getProfilesAndConnectors(features)
         painter = ProfilePainter(self.scene, self.view.width(), self.view.height())
@@ -356,19 +358,11 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         abs_file_path = os.path.join(script_dir, "help", "usage.html")
 
         if not os.path.isfile(abs_file_path):
-            QMessageBox.warning(
-                self,
-                "Manual not found",
-                f"Manual file not found:\n{abs_file_path}"
-            )
+            QMessageBox.warning(self, "Manual not found", f"Manual file not found:\n{abs_file_path}")
             return
 
         if not QDesktopServices.openUrl(QUrl.fromLocalFile(abs_file_path)):
-            QMessageBox.warning(
-                self,
-                "Error",
-                "Could not open the user manual."
-            )
+            QMessageBox.warning(self, "Error", "Could not open the user manual.")
 
     def showMessage(self, title, message, level):
         """Display a message in the main window's messageBar"""
