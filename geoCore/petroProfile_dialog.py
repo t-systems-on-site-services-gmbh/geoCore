@@ -330,7 +330,8 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
             "About",
             """<h1>geoCore</h1>
             <p>
-            Copyright (C) 2019-2021, 2026 Gerrit Bette, Gustavo Pereira Dalboni, Neshat Soleimani, T-Systems on site services GmbH<br>
+            Copyright (C) 2019-2021, 2026 Gerrit Bette, Gustavo Pereira Dalboni, Neshat Soleimani, 
+            T-Systems on site services GmbH<br>
             This program comes with ABSOLUTELY NO WARRANTY.
             This is free software, and you are welcome to redistribute it
             under certain conditions; see
@@ -338,7 +339,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
             https://www.gnu.org/licenses</a> for details.
             </p>
             <p>
-            Gerrit Bette, & Moritz Mennenga. (2026). t-systems-on-site-services-gmbh/geoCore v0.9 (Version 0.9) [Computer software]. 
+            Gerrit Bette, & Moritz Mennenga. (2026). t-systems-on-site-services-gmbh/geoCore v0.9 (Version 0.9) 
             Zenodo. <a href="https://doi.org/10.5281/zenodo.24197935">https://doi.org/10.5281/zenodo.24197935</a>
             </p>
             <p>
