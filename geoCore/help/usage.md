@@ -11,7 +11,7 @@ The QGIS Plugin geoCore is under development by [T-Systems on site services GmbH
 **Please backup your geoCore.yml, config.yml and the additional .svg files before you update the plugin. If not, the files will be deleted due to the QGIS updating process!**
 
 ## Citation
-G. Bette & M. Mennenga 2021: t-systems-on-site-services-gmbh/geoCore v0.8 (Version v0.8). Zenodo. http://doi.org/10.5281/zenodo.4548887
+Gerrit Bette, & Moritz Mennenga. (2026). t-systems-on-site-services-gmbh/geoCore v0.9 (Version 0.9) [Computer software]. Zenodo. [https://doi.org/10.5281/zenodo.24197935](https://doi.org/10.5281/zenodo.24197935)
 
 ## Aim
 

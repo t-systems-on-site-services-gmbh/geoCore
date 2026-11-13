@@ -28,4 +28,4 @@ See [LICENSE](LICENSE)
 
 ## Badges
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4548887.svg)](https://doi.org/10.5281/zenodo.4548887)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24197935.svg)](https://doi.org/10.5281/zenodo.24197935)
