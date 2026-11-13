@@ -4,10 +4,10 @@
 
 [general]
 name=geoCore
-qgisMinimumVersion=3.10
+qgisMinimumVersion=3.44
 qgisMaximumVersion=4.99
 description=Creates graphical representations of geoscientific drillings
-version=0.8.1
+version=0.9
 author=T-Systems on site services GmbH
 email=gerrit.bette@t-systems.com
 
