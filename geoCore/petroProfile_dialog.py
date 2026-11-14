@@ -358,11 +358,13 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         abs_file_path = os.path.join(script_dir, "help", "usage.html")
 
         if not os.path.isfile(abs_file_path):
-            QMessageBox.warning(self, "Manual not found", f"Manual file not found:\n{abs_file_path}")
+            self.showMessage(
+                "Manual not found", "Manual file not found: {}".format(abs_file_path), Qgis.MessageLevel.Critical
+            )
             return
 
         if not QDesktopServices.openUrl(QUrl.fromLocalFile(abs_file_path)):
-            QMessageBox.warning(self, "Error", "Could not open the user manual.")
+            self.showMessage("Error", "Could not open the user manual.", Qgis.MessageLevel.Critical)
 
     def showMessage(self, title, message, level):
         """Display a message in the main window's messageBar"""
