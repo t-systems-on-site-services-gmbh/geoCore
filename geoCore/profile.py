@@ -1,22 +1,19 @@
-"""Module containing the class Profile
+"""
+Module containing the class Profile
 
-geoCore - a QGIS plugin for drawing drilling profiles
-Copyright (C) 2019 - 2021  Gerrit Bette, T-Systems on site services GmbH
+geoCore - a QGIS plugin for drawing drilling profiles Copyright (C) 2019 - 2021 Gerrit Bette, T-Systems on site
+services GmbH
 
 This file is part of geoCore.
 
-geoCore is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+geoCore is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-geoCore is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+geoCore is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with geoCore.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License along with geoCore. If not, see
+<https://www.gnu.org/licenses/>.
 """
 
 from functools import reduce
@@ -24,8 +21,9 @@ from .otbp import Otbp
 
 
 class Profile(Otbp):
-    """Profile represents a petrographic drilling profile.
-    This class contains all relevant data for drawing"""
+    """
+    Profile represents a petrographic drilling profile. This class contains all relevant data for drawing
+    """
 
     def __init__(self, name):
         """Initialize the profile"""
@@ -58,8 +56,9 @@ class Profile(Otbp):
             b.paint(scene, self.x * self._xFac)
 
     def _paintLegend(self, scene):
-        """Paint legend explaining the width of the individual
-        layers/boxes below the profile"""
+        """
+        Paint legend explaining the width of the individual layers/boxes below the profile
+        """
         yBottom = self.y - self.height()
         yPos = (yBottom * self._yFac - self.margin) * -10  # cm to mm
         for b in self.boxes:
@@ -71,15 +70,14 @@ class Profile(Otbp):
             n.setY(yPos + 20 + self.margin)
 
     def paintDescription(self, scene):
-        """Paint description
-        A profile drawing with description consists of
-        three columns. The left column contains the heights
+        """
+        Paint description A profile drawing with description consists of three columns. The left column contains the
+        heights
+
             - surface height above sea level (unit mNHN),
             - depth of the drilling (unit mNHN).
-        The middle column contains the painted layer boxes.
-        In the right column you'll find the heights of the
-        individual layers (unit cm) relative to the surface height
-        as well as a description of the layer's petrology.
+        The middle column contains the painted layer boxes. In the right column you'll find the heights of the
+        individual layers (unit cm) relative to the surface height as well as a description of the layer's petrology.
         """
         self._paintRightDescription(scene)
         self._paintLeftDescription(scene)

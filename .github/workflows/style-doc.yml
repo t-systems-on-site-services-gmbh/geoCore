@@ -1,0 +1,29 @@
+
+name: Style-Doc
+
+on: [push, pull_request]
+
+jobs:
+  style-doc:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+
+      - name: Install Style-Doc
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install style-doc==0.2.0
+
+      - name: Check docstring formatting
+        run: |
+          find geoCore -maxdepth 1 -type f -name "*.py" \
+            ! -name "petroProfile.py" \
+            ! -name "petroProfile_dialog.py" \
+            -exec style-doc --check_only --py_only {} +
