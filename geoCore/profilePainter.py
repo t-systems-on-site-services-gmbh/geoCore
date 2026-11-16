@@ -1,16 +1,18 @@
 """
 This module contains the class profile Painter
 
-geoCore - a QGIS plugin for drawing drilling profiles Copyright (C) 2019 - 2021 Gerrit Bette, T-Systems on site
-services GmbH
+geoCore - a QGIS plugin for drawing drilling profiles Copyright (C) 2019 - 2021 Gerrit Bette,
+T-Systems on site services GmbH
 
 This file is part of geoCore.
 
-geoCore is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+geoCore is free software: you can redistribute it and/or modify it under the terms of the GNU
+General Public License as published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
 
-geoCore is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+geoCore is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+Public License for more details.
 
 You should have received a copy of the GNU General Public License along with geoCore. If not, see
 <https://www.gnu.org/licenses/>.
@@ -36,8 +38,8 @@ class ProfilePainter:
 
     def applyScale(self, xFac, yFac):
         """
-        Apply scaling factors in x- and y-dimension If None no scaling is applied for the x-position (i.e. xFac = 1.0)
-        but auto-scaling for the height (y-dimension) is turned on.
+        Apply scaling factors in x- and y-dimension If None no scaling is applied for the
+        x-position (i.e. xFac = 1.0) but auto-scaling for the height (y-dimension) is turned on.
         """
         if xFac is None:
             self._xFac = 1.0
@@ -55,8 +57,8 @@ class ProfilePainter:
 
     def paint(self, otbps, addDescription):
         """
-        Construct items. The parameter otbps stands for "objects to be painted" (i.e. profiles and connectors).
-        Parameter addDescription denotes if a description shall be added.
+        Construct items. The parameter otbps stands for "objects to be painted" (i.e. profiles and
+        connectors). Parameter addDescription denotes if a description shall be added.
         """
         if self._doAutoScaleX:
             self._setAutoXFac(otbps)
