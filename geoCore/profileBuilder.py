@@ -232,8 +232,12 @@ class ProfileBuilder:
         yLeft = pLeft.y
         yRight = pRight.y
 
+        def hasGroup(box):
+            return not (isinstance(box.group, QVariant) or box.group in (None, ""))
+
         left_idx = 0
         right_idx = 0
+        found = False
         while left_idx < len(pLeft.boxes):
             if lgLeft != pLeft.boxes[left_idx].group:
                 # new connector
@@ -244,52 +248,44 @@ class ProfileBuilder:
 
                 # find the corresponding group on the right side
                 found = False
-                while (right_idx < len(pRight.boxes)) and not found:
+                rStart = right_idx
+                yStart = yRight
+                while (right_idx < len(pRight.boxes)) and not found and hasGroup(pLeft.boxes[left_idx]):
                     if pLeft.boxes[left_idx].group == pRight.boxes[right_idx].group:
                         c.x2 = pRight.x
                         c.y2 = yRight
                         found = True
+                        if connectors and (connectors[-1].y1, connectors[-1].y2) == (c.y1, c.y2):
+                            # same border as the lower border of the previous group
+                            connectors.pop()  # avoids duplicate connectors
                         connectors.append(c)
                     yRight = yRight - pRight.boxes[right_idx].height
                     right_idx = right_idx + 1
 
+                if not found:
+                    # restore the position on the right for the next search
+                    right_idx = rStart
+                    yRight = yStart
+                else:
+                    # advance to the bottom boundary of the group on the right
+                    while (right_idx < len(pRight.boxes)) and pRight.boxes[right_idx].group == pLeft.boxes[
+                        left_idx
+                    ].group:
+                        yRight = yRight - pRight.boxes[right_idx].height
+                        right_idx = right_idx + 1
+
             lgLeft = pLeft.boxes[left_idx].group
             yLeft = yLeft - pLeft.boxes[left_idx].height
 
-            if len(pLeft.boxes) != len(pRight.boxes) and right_idx == len(pRight.boxes):
-                # last profile box on the right but not on the left
-                c = Connector()
-                c.x2 = pRight.x
-                c.y2 = pRight.y - pRight.height()
-
-                found = False
-                ll = len(pLeft.boxes) - 1
-                while ll >= left_idx and not found:
-                    if pLeft.boxes[ll].group == pRight.boxes[right_idx - 1].group:
-                        c.x1 = pLeft.x
-                        c.y1 = pLeft.y - sum([b.height for b in pLeft.boxes[: ll + 1]])
-                        c.xOffset = pLeft.boxes[ll].width
-                        found = True
-                        connectors.append(c)
-                    ll = ll - 1
-
-            if left_idx == len(pLeft.boxes) - 1:
-                # last profile box on the left
+            if found and (left_idx == len(pLeft.boxes) - 1 or pLeft.boxes[left_idx + 1].group != lgLeft):
+                # last profile box of a group on the left, connect to the end of the group on the right
                 c = Connector()
                 c.x1 = pLeft.x
-                c.y1 = pLeft.y - pLeft.height()
+                c.y1 = yLeft
                 c.xOffset = pLeft.boxes[left_idx].width
-
-                # connect to last corresponding group on the right
-                found = False
-                rr = len(pRight.boxes) - 1
-                while (rr >= right_idx - 1) and not found:
-                    if pLeft.boxes[left_idx].group == pRight.boxes[rr].group:
-                        c.x2 = pRight.x
-                        c.y2 = pRight.y - sum([b.height for b in pRight.boxes[: rr + 1]])
-                        found = True
-                        connectors.append(c)
-                    rr = rr - 1
+                c.x2 = pRight.x
+                c.y2 = yRight
+                connectors.append(c)
 
             left_idx = left_idx + 1
 
