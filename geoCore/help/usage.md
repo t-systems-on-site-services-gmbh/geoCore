@@ -149,7 +149,8 @@ If all files are available as described and the definitions are entered as requi
 ### Context menu
 A right click on the dialog opens the context menu. You have the following options:
 
-*    Scale: Changing the scales of x- and y-axis
+*    Scale: Change the scales of x- and y-axis
+*    Captions: Choose which fields are displayed in the caption beside each profile box and in which order
 *    Export as: Export the representation as
 *    North -> South ...: Change the order of the corings
 *    Manual: Open the manual
