@@ -38,11 +38,14 @@ from .gauge import Gauge
 class ProfileBuilder:
     """This class constructs the drilling profiles"""
 
-    def __init__(self, layerName, showMessage):
+    CAPTION_FIELDS = ("facies", "mainGroup", "subgroups", "comment", "color")
+
+    def __init__(self, layerName, showMessage, captionFields=None):
         """
         Features are the 'Stammdaten', i.e. data regarding the drilling profiles. config is the
         configuration element containing metadata to profiles.
         """
+        self.captionFields = self.CAPTION_FIELDS if captionFields is None else tuple(captionFields)
         self.nameLayerSchichtdaten = "{}_data".format(layerName)
         self.showMessage = showMessage
         self.petroPattern = re.compile(r"(\w*)\s*(\(.*\))?", re.IGNORECASE)
@@ -164,19 +167,18 @@ class ProfileBuilder:
             pb.texture = self._cfgLookup(color, "texture", showError=False)
 
             ggDict = self._cfgLookup(boxes, gg)
-            infoList = []
-            infoList.append(
-                self._cfgLookup(
-                    facies,
-                    layer[self.config.settings["facies"]],
-                    errorValue=layer[self.config.settings["facies"]],
-                )
+            caption = {}
+            caption["facies"] = self._cfgLookup(
+                facies,
+                layer[self.config.settings["facies"]],
+                errorValue=layer[self.config.settings["facies"]],
             )
-            infoList.append(self._cfgLookup(ggDict, "longname", errorValue=gg))
+            caption["mainGroup"] = self._cfgLookup(ggDict, "longname", errorValue=gg)
+            subgroups = []
             for k in kg:
                 kgDict = self._cfgLookup(descriptions, k)
 
-                infoList.append(self._cfgLookup(kgDict, "longname", errorValue=k))
+                subgroups.append(self._cfgLookup(kgDict, "longname", errorValue=k))
 
                 texture = self._cfgLookup(kgDict, "texture", showError=False)
 
@@ -184,9 +186,14 @@ class ProfileBuilder:
                     if not os.path.isabs(texture):
                         texture = os.path.join(self.config.myDir, "config", "geoCore", texture)
                     pb.texture = os.path.normpath(texture)
-            infoList.append(layer[self.config.settings["comment"]])
-            infoList.append(self._cfgLookup(color, "longname"))
-            pb.info = ", ".join([i for i in infoList if (i is not None) and not isinstance(i, QVariant)])
+            caption["subgroups"] = subgroups
+            caption["comment"] = layer[self.config.settings["comment"]]
+            caption["color"] = self._cfgLookup(color, "longname")
+            infoList = []
+            for field in self.captionFields:
+                values = caption.get(field, [])
+                infoList.extend(values if isinstance(values, list) else [values])
+            pb.info = ", ".join([str(i) for i in infoList if (i is not None) and not isinstance(i, QVariant)])
 
             profile.boxes.append(pb)
             # QgsMessageLog.logMessage("Profile {} - petro: {}({}), width: {}, height: {}, x: {}, y: {}, info: {}"

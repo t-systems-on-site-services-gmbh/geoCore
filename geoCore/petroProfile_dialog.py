@@ -36,12 +36,13 @@ from qgis.PyQt.QtWidgets import QAction, QActionGroup, QMenu
 from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
 from qgis.PyQt.QtGui import QPainter, QImage, QColor, QDesktopServices
 from qgis.PyQt.QtSvg import QSvgGenerator
-from qgis.PyQt.QtCore import QRectF, QEvent, QUrl
+from qgis.PyQt.QtCore import QRectF, QEvent, QUrl, QSettings
 from qgis.core import Qgis, QgsMessageLog
 
 from .profileBuilder import ProfileBuilder
 from .profilePainter import ProfilePainter
 from .scale_dialog import ScaleDialog
+from .caption_dialog import CaptionDialog
 
 # This loads your .ui file so that PyQt can populate your plugin
 # with the elements from Qt Designer
@@ -65,6 +66,8 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         self._setupGeoDirectionActions()
         self._xFac = None
         self._yFac = None
+        self._captionOrder, self._captionEnabled = self._loadCaptionSettings()
+        self._singleProfile = False
 
     def _setupScene(self):
         """Set up a new scene"""
@@ -106,6 +109,13 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         scaleAction.triggered.connect(self._scale)
         scaleAction.setEnabled(True)
         actions.append(scaleAction)
+
+        captionAction = QAction("Captions...", self)
+        captionAction.triggered.connect(self._configureCaption)
+        captionAction.setEnabled(self._singleProfile)
+        if not self._singleProfile:
+            captionAction.setToolTip("Captions are available only when viewing a single profile.")
+        actions.append(captionAction)
 
         exportAction = QAction("Export as...", self)
         exportAction.triggered.connect(self._exportToFile)
@@ -149,6 +159,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
     def contextMenuEvent(self, e):
         """Show context menu"""
         m = QMenu()
+        m.setToolTipsVisible(True)
         for a in self._getActions():
             m.addAction(a)
         m.exec(e.globalPos())
@@ -179,6 +190,31 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
 
         return super().eventFilter(obj, e)
 
+    def _loadCaptionSettings(self):
+        """Load and validate caption settings"""
+        fields = ProfileBuilder.CAPTION_FIELDS
+        settings = QSettings()
+        order = settings.value("geoCore/captionOrder")
+        enabled = settings.value("geoCore/captionEnabled")
+        if isinstance(enabled, str):
+            enabled = enabled.split()
+        if not isinstance(order, (list, tuple)) or set(order) != set(fields) or len(order) != len(fields):
+            order = list(fields)
+        if not isinstance(enabled, (list, tuple)) or any(field not in fields for field in enabled):
+            enabled = list(fields)
+        return list(order), list(dict.fromkeys(enabled))
+
+    def _configureCaption(self):
+        """Configure the content and order of the profile box captions."""
+        dlg = CaptionDialog(self._captionOrder, self._captionEnabled, self)
+        if dlg.exec():
+            self._captionOrder = dlg.captionOrder()
+            self._captionEnabled = dlg.captionEnabled()
+            settings = QSettings()
+            settings.setValue("geoCore/captionOrder", self._captionOrder)
+            settings.setValue("geoCore/captionEnabled", " ".join(self._captionEnabled))
+            self._redrawProfiles()
+
     def _scale(self):
         """Provide scaling factor"""
         dlg = ScaleDialog(self._xFac, self._yFac, self)
@@ -187,14 +223,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         if result:
             self._xFac = dlg.xFac()
             self._yFac = dlg.yFac()
-            if self._nsAction.isChecked():
-                self.drawProfilesNorthSouth()
-            elif self._snAction.isChecked():
-                self.drawProfilesSouthNorth()
-            elif self._weAction.isChecked():
-                self.drawProfilesWestEast()
-            elif self._ewAction.isChecked():
-                self.drawProfilesEastWest()
+            self._redrawProfiles()
 
     def _exportToFile(self):
         """Export drawing to file"""
@@ -284,6 +313,17 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
 
         return filename
 
+    def _redrawProfiles(self):
+        """Redraw profiles according to the current direction"""
+        if self._nsAction.isChecked():
+            self.drawProfilesNorthSouth()
+        elif self._snAction.isChecked():
+            self.drawProfilesSouthNorth()
+        elif self._weAction.isChecked():
+            self.drawProfilesWestEast()
+        elif self._ewAction.isChecked():
+            self.drawProfilesEastWest()
+
     def drawProfilesNorthSouth(self):
         """Draw profiles in direction from north to south"""
         self._nsAction.setChecked(True)
@@ -307,7 +347,11 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
     def _drawProfiles(self, coordinateKey, sortDirection):
         """Draw the selected drilling profiles"""
         self.scene.clear()
-        builder = ProfileBuilder(self.iface.activeLayer().name(), self.showMessage)
+        builder = ProfileBuilder(
+            self.iface.activeLayer().name(),
+            self.showMessage,
+            [field for field in self._captionOrder if field in self._captionEnabled],
+        )
         coordinateField = builder.config.settings[coordinateKey]
 
         def crit(f):
@@ -317,7 +361,8 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         pac = builder.getProfilesAndConnectors(features)
         painter = ProfilePainter(self.scene, self.view.width(), self.view.height())
         painter.applyScale(self._xFac, self._yFac)
-        painter.paint(pac, len(pac) == 1)
+        self._singleProfile = len(pac) == 1
+        painter.paint(pac, self._singleProfile)
         self.view.resetTransform()
         self.view.setSceneRect(self.scene.itemsBoundingRect())
 
