@@ -67,6 +67,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         self._xFac = None
         self._yFac = None
         self._captionOrder, self._captionEnabled = self._loadCaptionSettings()
+        self._singleProfile = False
 
     def _setupScene(self):
         """Set up a new scene"""
@@ -111,6 +112,9 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
 
         captionAction = QAction("Captions...", self)
         captionAction.triggered.connect(self._configureCaption)
+        captionAction.setEnabled(self._singleProfile)
+        if not self._singleProfile:
+            captionAction.setToolTip("Captions are available only when viewing a single profile.")
         actions.append(captionAction)
 
         exportAction = QAction("Export as...", self)
@@ -155,6 +159,7 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
     def contextMenuEvent(self, e):
         """Show context menu"""
         m = QMenu()
+        m.setToolTipsVisible(True)
         for a in self._getActions():
             m.addAction(a)
         m.exec(e.globalPos())
@@ -356,7 +361,8 @@ class PetroProfileDialog(QtWidgets.QDialog, FORM_CLASS):
         pac = builder.getProfilesAndConnectors(features)
         painter = ProfilePainter(self.scene, self.view.width(), self.view.height())
         painter.applyScale(self._xFac, self._yFac)
-        painter.paint(pac, len(pac) == 1)
+        self._singleProfile = len(pac) == 1
+        painter.paint(pac, self._singleProfile)
         self.view.resetTransform()
         self.view.setSceneRect(self.scene.itemsBoundingRect())
 
