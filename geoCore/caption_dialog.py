@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+"""Dialog to configure profile box captions"""
 
 import os
 
